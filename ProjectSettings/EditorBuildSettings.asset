@@ -11,4 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lecture8.unity
     guid: f5ab6d15d3cb4db4f8ed13897dca2f33
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: f576637812ff05a4db795cdf9d087903,
+      type: 3}
