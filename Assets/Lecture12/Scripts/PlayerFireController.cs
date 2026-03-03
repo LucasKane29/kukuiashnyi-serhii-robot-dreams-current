@@ -9,7 +9,7 @@ public class PlayerFireController : MonoBehaviour
     private Transform firePoint;
 
     [SerializeField]
-    private float explosionRadius = 1f, explosionForce = 1000f;
+    private float explosionRadius = 1f, explosionForce = 100f;
 
     [SerializeField]
     private LayerMask layerMask;
@@ -43,26 +43,28 @@ public class PlayerFireController : MonoBehaviour
         if (Physics.Raycast(firePoint.position, firePoint.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
         {
             Debug.DrawRay(firePoint.position, firePoint.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-
             Collider[] colliders = Physics.OverlapSphere(hit.point, explosionRadius, layerMask);
 
             foreach (Collider collider in colliders)
             {
                 Rigidbody rb = collider.attachedRigidbody;
 
-                if (rb == null || affectedBodies.Contains(rb))
+                if (rb == null)
                     continue;
 
-                affectedBodies.Add(rb);
-                Vector3 forceDirection = (rb.position - hit.point).normalized;
-                rb.AddForce(forceDirection * explosionForce);
+                if (affectedBodies.Add(rb))
+                {
+                    Vector3 forceDirection = (rb.position - hit.point).normalized;
+                    rb.AddForce(forceDirection * explosionForce);
+                }
             }
+            affectedBodies.Clear();
         }
         else
         {
             Debug.DrawRay(firePoint.position, firePoint.TransformDirection(Vector3.forward) * 1000, Color.white);
         }
-
+        
         return hit;
     }
 }
