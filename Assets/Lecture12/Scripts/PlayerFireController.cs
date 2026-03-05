@@ -48,11 +48,7 @@ public class PlayerFireController : MonoBehaviour
             foreach (Collider collider in colliders)
             {
                 Rigidbody rb = collider.attachedRigidbody;
-
-                if (rb == null)
-                    continue;
-
-                if (affectedBodies.Add(rb))
+                if (rb != null && affectedBodies.Add(rb))
                 {
                     Vector3 forceDirection = (rb.position - hit.point).normalized;
                     rb.AddForce(forceDirection * explosionForce);
