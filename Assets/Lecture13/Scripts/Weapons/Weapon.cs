@@ -9,6 +9,7 @@ public abstract class Weapon : MonoBehaviour, IWeapon
 
     [SerializeField] protected int maxAmmo = 10;
     [SerializeField] protected float reloadTime = 2f;
+    [SerializeField] protected LayerMask targetLayer;
 
     protected int currentAmmo;
     protected float nextFireTime;
@@ -21,7 +22,7 @@ public abstract class Weapon : MonoBehaviour, IWeapon
         currentAmmo = maxAmmo;
     }
 
-    public abstract void Fire(Transform firePoint);
+    public abstract void Fire();
 
     public virtual void Reload()
     {

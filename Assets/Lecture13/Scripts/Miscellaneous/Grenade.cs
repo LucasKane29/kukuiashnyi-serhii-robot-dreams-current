@@ -7,13 +7,15 @@ public class Grenade : MonoBehaviour
     [SerializeField] private float explosionRadius = 5f;
     [SerializeField] private float explosionForce = 1000f;
     [SerializeField] private float fuseTime = 3f;
-    [SerializeField] private LayerMask targetLayer;
     [SerializeField] private GameObject explosionEffect;
+
+    private LayerMask targetLayer;
     private float damage;
 
-    public void Init(float damage)
+    public void Init(float damage, LayerMask targetLayer)
     {
         this.damage = damage;
+        this.targetLayer = targetLayer;
         StartCoroutine(ExplodeAfterDelay());
     }
 

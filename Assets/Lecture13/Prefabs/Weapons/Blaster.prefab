@@ -24,13 +24,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8006110493243072924}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: -16.7, z: 5.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2151022472951155068}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1001 &3184761305563195798
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -275,11 +275,11 @@ MonoBehaviour:
   fireRate: 2
   maxAmmo: 30
   reloadTime: 2
-  range: 100
   targetLayer:
     serializedVersion: 2
-    m_Bits: 64
-  laserBoltPrefab: {fileID: 4377426850459618055, guid: c84e29c1c7249334d8a093407c560cb8,
+    m_Bits: 192
+  range: 100
+  laserBoltPrefab: {fileID: 6498196808488522941, guid: c84e29c1c7249334d8a093407c560cb8,
     type: 3}
   muzzlePosition: {fileID: 673275708051923118}
   hitForce: 3

@@ -7,6 +7,8 @@ namespace Lesson13
 {
     public class PlayerMoveController : MonoBehaviour
     {
+        [Header("Move Settings")]
+
         [SerializeField]
         private CharacterController characterController;
 
@@ -17,20 +19,19 @@ namespace Lesson13
         private float topClamp = 10f, bottomClamp = -45f;
 
         [SerializeField]
-        private Transform followTarget;
+        private float lookRange = 100f;
 
         [SerializeField]
-        private Transform weaponTarget;
+        private Transform followTarget, weaponTarget, playerCamera;
 
         [SerializeField]
         private string moveActionName = "Move", lookActionName = "Look";
 
         private InputAction moveAction, lookAction;
-
         private float yaw = 0f;
         private float pitch = 0f;
-
         private Vector2 movementVector;
+
 
         void Start()
         {
@@ -75,7 +76,14 @@ namespace Lesson13
         {
             transform.rotation = Quaternion.Euler(0f, yaw, 0f);
             followTarget.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
-            weaponTarget.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+
+            Vector3 aimPoint = playerCamera.position + playerCamera.forward * lookRange;
+
+            if(Physics.Raycast(playerCamera.position, playerCamera.forward, out RaycastHit hit, lookRange))
+            {
+                aimPoint = hit.point;
+            }
+            weaponTarget.transform.rotation = Quaternion.LookRotation((aimPoint - weaponTarget.position).normalized);
         }
 
         private void OnApplicationFocus(bool focus)

@@ -7,10 +7,11 @@ namespace Lesson13
 {
     public class PlayerFireController : MonoBehaviour
     {
+        [Header("Fire Settings")]
+
         [SerializeField] private Transform firePoint;
 
         [SerializeField] private Weapon[] weapons;
-        [SerializeField] private Camera mainCamera;
         [SerializeField]
         private string attackActionName = "Attack", reloadActionName = "Reload", switchWeaponActionName = "SwitchWeapon";
         [SerializeField] private Transform weaponSpawnPoint;
@@ -36,7 +37,7 @@ namespace Lesson13
         void Update()
         {
             if (attackAction.WasPressedThisFrame())
-                currentWeapon?.Fire(firePoint);
+                currentWeapon?.Fire();
 
             if (reloadAction.WasPressedThisFrame())
                 currentWeapon?.Reload();
@@ -50,6 +51,11 @@ namespace Lesson13
             }
             else if (direction == 0)
                 scrollUsed = false;
+        }
+
+        private void FixedUpdate()
+        {   
+            
         }
 
         private void SwitchWeapon(int direction)
