@@ -41,7 +41,7 @@ public class Grenade : MonoBehaviour
                 collider.attachedRigidbody.AddExplosionForce(explosionForce, explosionPoint, explosionRadius);
 
                 if (collider.TryGetComponent(out IDamageable damageable))
-                    damageable.TakeDamage(damage);
+                    damageable.TakeDamage(damage, collider.ClosestPoint(explosionPoint).normalized);
             }
         }
 

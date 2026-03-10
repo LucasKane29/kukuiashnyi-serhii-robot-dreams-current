@@ -6,13 +6,7 @@ public class Box : MonoBehaviour, IDamageable
 {
     [SerializeField] private float hitPoints = 100f;
 
-    private Rigidbody rb;
-    void Start()
-    {
-        rb = this.GetComponent<Rigidbody>();
-    }
-
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, Vector3 hitPoint)
     {
         string objectName = gameObject.name;
         hitPoints -= damage;

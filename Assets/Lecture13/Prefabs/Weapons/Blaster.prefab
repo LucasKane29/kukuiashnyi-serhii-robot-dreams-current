@@ -283,3 +283,5 @@ MonoBehaviour:
     type: 3}
   muzzlePosition: {fileID: 673275708051923118}
   hitForce: 3
+  flashEffect: {fileID: 3082914292398189469, guid: 4c7db5db8d3baf84892c41a5c09427e9,
+    type: 3}

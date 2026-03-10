@@ -3,7 +3,7 @@ using UnityEngine;
 public class LaserBolt : MonoBehaviour
 {
     [SerializeField] private float speed = 80f;
-    [SerializeField] private float radius = 0.5f;
+    [SerializeField] private float radius = 0.01f;
 
     private float range;
     private float distanceTraveled;
@@ -31,10 +31,11 @@ public class LaserBolt : MonoBehaviour
         {
             if (hit.collider.TryGetComponent(out IDamageable damageable))
             {
-                Vector3 forceDirection = (hit.rigidbody.position - hit.point).normalized;
-                hit.rigidbody.AddForceAtPosition(forceDirection * hitForce, hit.point, ForceMode.Impulse);
+                Rigidbody hitRigidbody = hit.rigidbody;
+                Vector3 forceDirection = (hitRigidbody.position - hit.point).normalized;
+                hitRigidbody.AddForceAtPosition(forceDirection * hitForce, hit.point, ForceMode.Impulse);
 
-                damageable.TakeDamage(hitDamage);
+                damageable.TakeDamage(hitDamage, hit.point);
             }
             Destroy(gameObject);
         }

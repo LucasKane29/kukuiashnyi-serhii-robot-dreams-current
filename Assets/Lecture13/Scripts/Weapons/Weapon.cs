@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Zenject;
 
 public abstract class Weapon : MonoBehaviour, IWeapon
 {
@@ -14,6 +15,14 @@ public abstract class Weapon : MonoBehaviour, IWeapon
     protected int currentAmmo;
     protected float nextFireTime;
     protected bool isReloading;
+
+    protected SignalBus signalBus;
+
+    [Inject]
+    public void Construct(SignalBus signalBus)
+    {
+        this.signalBus = signalBus;
+    }
 
     public bool CanFire => !isReloading && currentAmmo > 0 && Time.time >= nextFireTime;
 
@@ -36,5 +45,10 @@ public abstract class Weapon : MonoBehaviour, IWeapon
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         isReloading = false;
+    }
+
+    protected void MadeShot()
+    {
+        signalBus.Fire(new ShotMadeSignal());
     }
 }
