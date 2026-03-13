@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 public class EnemyHead : MonoBehaviour, IDamageable
 {
@@ -9,17 +8,12 @@ public class EnemyHead : MonoBehaviour, IDamageable
     [SerializeField] private float damageMultiplier;
     [SerializeField] private float additionalScore = 0f;
 
-    private SignalBus signalBus;
-
-    [Inject]
-    public void Construct(SignalBus signalBus)
-    {
-        this.signalBus = signalBus;
-    }
+    [SerializeField]
+    private EventBus eventBus;
 
     public void TakeDamage(float damage, Vector3 hitPoint)
     {
         parentEnemy.TakeDamage(damage * damageMultiplier, hitPoint);
-        signalBus.Fire(new HeadshotMadeSignal(parentEnemy, additionalScore));
+        eventBus.Publish(new HeadshotMadeEvent(parentEnemy, additionalScore));
     }
 }

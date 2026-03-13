@@ -2,7 +2,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
-using Zenject;
 
 namespace Lesson13
 {
@@ -16,6 +15,8 @@ namespace Lesson13
         [SerializeField]
         private string attackActionName = "Attack", reloadActionName = "Reload", switchWeaponActionName = "SwitchWeapon";
         [SerializeField] private Transform weaponSpawnPoint;
+        [SerializeField] private EventBus eventBus;
+
 
         private int currentWeaponIndex = 0;
         private Weapon currentWeapon;
@@ -23,14 +24,6 @@ namespace Lesson13
         private InputAction reloadAction;
         private InputAction switchWeaponAction;
         private bool scrollUsed;
-        private DiContainer container;
-
-
-        [Inject]
-        public void Construct(DiContainer container)
-        {
-            this.container = container;
-        }
 
         void Start()
         {
@@ -79,9 +72,10 @@ namespace Lesson13
         {
             if (currentWeapon != null)
                 Destroy(currentWeapon.gameObject);
-            GameObject spawnedWeapon = container.InstantiatePrefab(weapon.gameObject, weaponSpawnPoint);
+            GameObject spawnedWeapon = Instantiate(weapon.gameObject, weaponSpawnPoint, false);
 
             currentWeapon = spawnedWeapon.GetComponent<Weapon>();
+            currentWeapon.SetEventBus(eventBus);
         }   
     }
 }

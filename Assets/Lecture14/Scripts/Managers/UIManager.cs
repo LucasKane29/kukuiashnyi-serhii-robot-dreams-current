@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using Zenject;
 using System;
 
-public class UIManager : MonoBehaviour, IInitializable, IDisposable
+public class UIManager : MonoBehaviour
 {
     [SerializeField]
     private TextMeshProUGUI scoreText, headshotsText, shotsText;
-
-    private SignalBus signalBus;
+    [SerializeField]
+    private EventBus eventBus;
 
     private float initialValue = 0f;
 
@@ -21,38 +20,32 @@ public class UIManager : MonoBehaviour, IInitializable, IDisposable
         shotsText.text = $"Shots: {initialValue}";
     }
 
-    [Inject]
-    public void Construct(SignalBus signalBus)
+    public void OnEnable()
     {
-        this.signalBus = signalBus;
+        eventBus.Subscribe<UpdatedScoreEvent>(OnScoreUpdated);
+        eventBus.Subscribe<UpdatedShotsEvent>(OnShotsUpdated);
+        eventBus.Subscribe<UpdatedHeadshotsEvent>(OnHeadshotsUpdated);
     }
 
-    public void Initialize()
+    public void OnDisable()
     {
-        signalBus.Subscribe<UpdatedScoreSignal>(OnScoreUpdated);
-        signalBus.Subscribe<UpdatedShotsSignal>(OnShotsUpdated);
-        signalBus.Subscribe<UpdatedHeadshotsSignal>(OnHeadshotsUpdated);
+        eventBus.Unsubscribe<UpdatedScoreEvent>(OnScoreUpdated);
+        eventBus.Unsubscribe<UpdatedShotsEvent>(OnShotsUpdated);
+        eventBus.Unsubscribe<UpdatedHeadshotsEvent>(OnHeadshotsUpdated);
     }
 
-    public void Dispose()
+    void OnScoreUpdated(UpdatedScoreEvent subscribedEvent)
     {
-        signalBus.Unsubscribe<UpdatedScoreSignal>(OnScoreUpdated);
-        signalBus.Unsubscribe<UpdatedShotsSignal>(OnShotsUpdated);
-        signalBus.Unsubscribe<UpdatedHeadshotsSignal>(OnHeadshotsUpdated);
+        scoreText.text = $"Score: {subscribedEvent.currentScore}";
     }
 
-    void OnScoreUpdated(UpdatedScoreSignal signal)
+    void OnShotsUpdated(UpdatedShotsEvent subscribedEvent)
     {
-        scoreText.text = $"Score: {signal.currentScore}";
+        shotsText.text = $"Shots: {subscribedEvent.currentValue}";
     }
 
-    void OnShotsUpdated(UpdatedShotsSignal signal)
+    void OnHeadshotsUpdated(UpdatedHeadshotsEvent subscribedEvent)
     {
-        shotsText.text = $"Shots: {signal.currentValue}";
-    }
-
-    void OnHeadshotsUpdated(UpdatedHeadshotsSignal signal)
-    {
-        headshotsText.text = $"Headshots: {signal.currentValue}";
+        headshotsText.text = $"Headshots: {subscribedEvent.currentValue}";
     }
 }

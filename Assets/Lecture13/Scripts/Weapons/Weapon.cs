@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using Zenject;
 
 public abstract class Weapon : MonoBehaviour, IWeapon
 {
@@ -11,18 +10,13 @@ public abstract class Weapon : MonoBehaviour, IWeapon
     [SerializeField] protected int maxAmmo = 10;
     [SerializeField] protected float reloadTime = 2f;
     [SerializeField] protected LayerMask targetLayer;
+    [SerializeField] protected EventBus eventBus;
 
     protected int currentAmmo;
     protected float nextFireTime;
     protected bool isReloading;
 
-    protected SignalBus signalBus;
 
-    [Inject]
-    public void Construct(SignalBus signalBus)
-    {
-        this.signalBus = signalBus;
-    }
 
     public bool CanFire => !isReloading && currentAmmo > 0 && Time.time >= nextFireTime;
 
@@ -49,6 +43,11 @@ public abstract class Weapon : MonoBehaviour, IWeapon
 
     protected void MadeShot()
     {
-        signalBus.Fire(new ShotMadeSignal());
+        eventBus.Publish(new ShotMadeEvent());
+    }
+
+    public void SetEventBus(EventBus eventBus)
+    {
+        this.eventBus = eventBus; 
     }
 }

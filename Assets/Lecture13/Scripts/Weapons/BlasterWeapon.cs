@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Net;
 using UnityEngine;
-using Zenject;
 
 public class BlasterWeapon : Weapon
 {

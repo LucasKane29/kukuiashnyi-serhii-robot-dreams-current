@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
-using Zenject;
 
-public abstract class Enemy : MonoBehaviour, IDamageable, IInitializable, IDisposable
+public abstract class Enemy : MonoBehaviour, IDamageable
 {
     [SerializeField] private float hitPoints = 10f;
     [SerializeField] private EnemyHead head;
@@ -13,16 +12,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IInitializable, IDispo
     [SerializeField] private HealhbarManager healthbar;
     [SerializeField] private GameObject shotEffect;
     [SerializeField] private float shotEffectDuration = 0.5f;
+    [SerializeField] private EventBus eventBus;
 
-    private SignalBus signalBus;
     private float currentScoreForDeath;
     private HashSet<VisualEffect> activeEffects = new HashSet<VisualEffect>();
-
-    [Inject]
-    public void Construct(SignalBus signalBus)
-    {
-        this.signalBus = signalBus;
-    }
 
     private float maxHealth;
 
@@ -39,7 +32,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IInitializable, IDispo
         if (hitPoints < 0)
             hitPoints = 0;
         Debug.Log($"{objectName} took {damage} damage!");
-        signalBus.Fire(new HealthChangedSignal(this, hitPoints, maxHealth));
+        eventBus.Publish(new HealthChangedEvent(this, hitPoints, maxHealth));
         StartCoroutine(ShowShotEffect(hitPoint));
     }
 
@@ -51,29 +44,29 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IInitializable, IDispo
         activeEffects.Clear();
 
         Debug.Log($"{gameObject.name} died!");
-        signalBus.Fire(new EnemyKilledSignal(currentScoreForDeath));
+        eventBus.Publish(new EnemyKilledEvent(currentScoreForDeath));
         Destroy(gameObject);
     }
 
     public abstract void runDieAnimation();
     public abstract void runTakeDamageAnimation();
 
-    public void Initialize()
+    public void OnEnable()
     {
-        signalBus.Subscribe<HeadshotMadeSignal>(OnHeadshotGot);
+        eventBus.Subscribe<HeadshotMadeEvent>(OnHeadshotGot);
     }
 
-    public void Dispose()
+    public void OnDisable()
     {
-        signalBus.Unsubscribe<HeadshotMadeSignal>(OnHeadshotGot);
+        eventBus.Unsubscribe<HeadshotMadeEvent>(OnHeadshotGot);
     }
 
-    void OnHeadshotGot(HeadshotMadeSignal signal)
+    void OnHeadshotGot(HeadshotMadeEvent subscribedEvent)
     {
-        if (this.GetInstanceID() != signal.enemy.GetInstanceID())
+        if (this.GetInstanceID() != subscribedEvent.enemy.GetInstanceID())
             return;
 
-        currentScoreForDeath += signal.additionalScore;
+        currentScoreForDeath += subscribedEvent.additionalScore;
         Debug.Log($"Score for killing {gameObject.name} is now {currentScoreForDeath}");
     }
 
