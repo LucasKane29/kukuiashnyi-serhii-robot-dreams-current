@@ -25,7 +25,7 @@ public abstract class Weapon : MonoBehaviour, IWeapon
         currentAmmo = maxAmmo;
     }
 
-    public abstract void Fire();
+    public abstract void Fire(Vector3? targetDirection = null);
 
     public virtual void Reload()
     {
@@ -43,7 +43,10 @@ public abstract class Weapon : MonoBehaviour, IWeapon
 
     protected void MadeShot()
     {
-        eventBus.Publish(new ShotMadeEvent());
+        if(eventBus != null)
+        {
+            eventBus.Publish(new ShotMadeEvent());
+        }
     }
 
     public void SetEventBus(EventBus eventBus)

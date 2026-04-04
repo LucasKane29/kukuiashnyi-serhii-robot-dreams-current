@@ -5,42 +5,65 @@ public class LaserBolt : MonoBehaviour
     [SerializeField] private float speed = 80f;
     [SerializeField] private float radius = 0.01f;
 
-    private float range;
+    private float _range;
     private float distanceTraveled;
 
-    private LayerMask targetLayer;
-    private float hitDamage;
-    private float hitForce;
+    private LayerMask _targetLayer;
+    private float _hitDamage;
+    private float _hitForce;
+    private Vector3 _damagerPosition;
+    private Vector3? _targetPosition = null;
+    private Vector3 _forwardDirection;
 
-    public void Initialize(float range, LayerMask targetLayer, float hitDamage, float hitForce)
+    public void Initialize(float range, LayerMask targetLayer, float hitDamage, float hitForce, Vector3 damagerPosition, Vector3? targetPosition = null)
     {
-        this.range = range;
-        this.targetLayer = targetLayer;
-        this.hitDamage = hitDamage;
-        this.hitForce = hitForce;
+        _range = range;
+        _targetLayer = targetLayer;
+        _hitDamage = hitDamage;
+        _hitForce = hitForce;
+        _damagerPosition = damagerPosition;
+        if (targetPosition != null)
+        {
+            _targetPosition = (targetPosition.Value - damagerPosition).normalized;
+        }
+
     }
 
     void FixedUpdate()
     {
         float step = speed * Time.fixedDeltaTime;
+        if (_targetPosition != null)
+        {
+            transform.Translate(_targetPosition.Value * step, Space.World);
+            _forwardDirection = _targetPosition.Value;
+        }
+        else
+        {
+            transform.Translate(Vector3.forward * step);
+            _forwardDirection = this.transform.forward;
+        }
 
-        transform.Translate(Vector3.forward * step);
         distanceTraveled += step;
 
-        if (Physics.SphereCast(this.transform.position, radius, this.transform.forward, out RaycastHit hit, step, targetLayer))
+        if (Physics.SphereCast(this.transform.position, radius, _forwardDirection, out RaycastHit hit, step, _targetLayer))
         {
             if (hit.collider.TryGetComponent(out IDamageable damageable))
             {
+                Vector3 aimedPosition = hit.transform.position;
                 Rigidbody hitRigidbody = hit.rigidbody;
-                Vector3 forceDirection = (hitRigidbody.position - hit.point).normalized;
-                hitRigidbody.AddForceAtPosition(forceDirection * hitForce, hit.point, ForceMode.Impulse);
 
-                damageable.TakeDamage(hitDamage, hit.point);
+                if (hitRigidbody != null)
+                {
+                    Vector3 forceDirection = (hitRigidbody.position - hit.point).normalized;
+                    hitRigidbody.AddForceAtPosition(forceDirection * _hitForce, hit.point, ForceMode.Impulse);
+                }
+
+                damageable.TakeDamage(_hitDamage, hit.point, _damagerPosition);
             }
             Destroy(gameObject);
         }
 
-        if (distanceTraveled >= range)
+        if (distanceTraveled >= _range)
             Destroy(gameObject);
     }
 

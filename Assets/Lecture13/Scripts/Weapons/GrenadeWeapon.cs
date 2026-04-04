@@ -9,7 +9,7 @@ public class GrenadeWeapon : Weapon
     [SerializeField] private float launchForce = 20f;
 
 
-    public override void Fire()
+    public override void Fire(Vector3? targetDirection = null)
     {
         if (!CanFire || grenadePrefab == null) return;
 
@@ -20,6 +20,6 @@ public class GrenadeWeapon : Weapon
         grenade.AddForce(startPosition.forward * launchForce, ForceMode.Impulse);
 
         if (grenade.TryGetComponent(out Grenade grenadeScript))
-            grenadeScript.Init(damage, targetLayer);
+            grenadeScript.Init(damage, targetLayer, startPosition.position);
     }
 }

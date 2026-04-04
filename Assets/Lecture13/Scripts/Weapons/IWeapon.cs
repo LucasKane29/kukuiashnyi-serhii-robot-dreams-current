@@ -3,6 +3,6 @@ using UnityEngine;
 public interface IWeapon
 {
     bool CanFire { get; }
-    void Fire();
+    void Fire(Vector3? targetDirection = null);
     void Reload();
 }

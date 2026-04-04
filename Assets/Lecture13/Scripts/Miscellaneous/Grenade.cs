@@ -11,11 +11,13 @@ public class Grenade : MonoBehaviour
 
     private LayerMask targetLayer;
     private float damage;
+    private Vector3 damagerPosition;
 
-    public void Init(float damage, LayerMask targetLayer)
+    public void Init(float damage, LayerMask targetLayer, Vector3 damagerPosition)
     {
         this.damage = damage;
         this.targetLayer = targetLayer;
+        this.damagerPosition = damagerPosition;
         StartCoroutine(ExplodeAfterDelay());
     }
 
@@ -41,7 +43,7 @@ public class Grenade : MonoBehaviour
                 collider.attachedRigidbody.AddExplosionForce(explosionForce, explosionPoint, explosionRadius);
 
                 if (collider.TryGetComponent(out IDamageable damageable))
-                    damageable.TakeDamage(damage, collider.ClosestPoint(explosionPoint));
+                    damageable.TakeDamage(damage, collider.ClosestPoint(explosionPoint), damagerPosition);
             }
         }
 

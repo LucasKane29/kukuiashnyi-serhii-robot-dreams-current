@@ -25,6 +25,16 @@ namespace Lesson13
         private InputAction switchWeaponAction;
         private bool scrollUsed;
 
+        public void OnEnable()
+        {
+            eventBus.Subscribe<GamePausedEvent>(OnGamePaused);
+        }
+
+        public void OnDisable()
+        {
+            eventBus.Unsubscribe<GamePausedEvent>(OnGamePaused);
+        }
+
         void Start()
         {
             attackAction = InputSystem.actions.FindAction(attackActionName);
@@ -54,11 +64,6 @@ namespace Lesson13
                 scrollUsed = false;
         }
 
-        private void FixedUpdate()
-        {   
-            
-        }
-
         private void SwitchWeapon(int direction)
         {
             if (weapons.Length == 0) 
@@ -77,5 +82,21 @@ namespace Lesson13
             currentWeapon = spawnedWeapon.GetComponent<Weapon>();
             currentWeapon.SetEventBus(eventBus);
         }   
+
+        void OnGamePaused(GamePausedEvent subscribedEvent)
+        {
+            if (subscribedEvent.isGamePaused)
+            {
+                attackAction.Disable();
+                reloadAction.Disable();
+                switchWeaponAction.Disable();
+            }
+            else
+            {
+                attackAction.Enable();
+                reloadAction.Enable();
+                switchWeaponAction.Enable();
+            }
+        }
     }
 }

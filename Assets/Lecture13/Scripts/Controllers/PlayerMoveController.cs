@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,14 +28,28 @@ namespace Lesson13
         [SerializeField]
         private string moveActionName = "Move", lookActionName = "Look";
 
+        [SerializeField]
+        private EventBus eventBus;
+
         private InputAction moveAction, lookAction;
         private float yaw = 0f;
         private float pitch = 0f;
         private Vector2 movementVector;
+        public void OnEnable()
+        {
+            eventBus.Subscribe<GamePausedEvent>(OnGamePaused);
+        }
 
+        public void OnDisable()
+        {
+            eventBus.Unsubscribe<GamePausedEvent>(OnGamePaused);
+        }
 
         void Start()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
             if (characterController == null)
             {
                 characterController = GetComponent<CharacterController>();
@@ -79,7 +94,7 @@ namespace Lesson13
 
             Vector3 aimPoint = playerCamera.position + playerCamera.forward * lookRange;
 
-            if(Physics.Raycast(playerCamera.position, playerCamera.forward, out RaycastHit hit, lookRange))
+            if (Physics.Raycast(playerCamera.position, playerCamera.forward, out RaycastHit hit, lookRange))
             {
                 aimPoint = hit.point;
             }
@@ -90,6 +105,19 @@ namespace Lesson13
         {
             Cursor.lockState = focus ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !focus;
+        }
+        void OnGamePaused(GamePausedEvent subscribedEvent)
+        {
+            if (subscribedEvent.isGamePaused)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
         }
     }
 }

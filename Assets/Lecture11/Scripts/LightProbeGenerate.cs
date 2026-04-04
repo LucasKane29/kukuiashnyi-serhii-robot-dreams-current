@@ -137,7 +137,7 @@ public class LightProbeGenerate : MonoBehaviour
             return;
         }
 
-        lightProbeGroup.probePositions = positions.ToArray();
+        //lightProbeGroup.probePositions = positions.ToArray();
 
 #if UNITY_EDITOR
         EditorUtility.SetDirty(lightProbeGroup);
