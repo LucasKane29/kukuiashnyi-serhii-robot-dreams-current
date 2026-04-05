@@ -2,22 +2,13 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class HealthbarManager : MonoBehaviour
+public class HealthbarController : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject parentObject;
-
     [SerializeField]
     private RectTransform healthbarLevel;
 
     [SerializeField]
     private float animationSpeed = 0.3f;
-
-    [SerializeField]
-    private Camera playerCamera;
-
-    [SerializeField]
-    private EventBus eventBus;
 
     private float maxHealthBarWidth;
 
@@ -27,25 +18,8 @@ public class HealthbarManager : MonoBehaviour
     {
         maxHealthBarWidth = healthbarLevel.sizeDelta.x;
     }
-
-    public void OnEnable()
-    {
-        eventBus.Subscribe<HealthChangedEvent>(OnHealthChanged);
-    }
-    public void OnDisable()
-    {
-        eventBus.Unsubscribe<HealthChangedEvent>(OnHealthChanged);
-    }
-
-    void OnHealthChanged(HealthChangedEvent subscribedEvent)
-    {
-        if (subscribedEvent.TargetObject.GetInstanceID() != this.parentObject.GetInstanceID())
-            return;
-
-        UpdateBar(subscribedEvent.CurrentHealth, subscribedEvent.MaxHealth);
-    }
-
-    private void UpdateBar(float current, float max)
+    
+    public void UpdateBar(float current, float max)
     {
         Debug.Log($"Health changed: {current} / {max}");
 
@@ -71,4 +45,15 @@ public class HealthbarManager : MonoBehaviour
         }
         healthbarLevel.sizeDelta = new Vector2(targetWidth, healthbarLevel.sizeDelta.y);
     }
+    
+    public void ResetBar()
+    {
+        if (currentAnimation != null)
+        {
+            StopCoroutine(currentAnimation);
+        }
+        healthbarLevel.sizeDelta = new Vector2(maxHealthBarWidth, healthbarLevel.sizeDelta.y);
+    }
 }
+
+

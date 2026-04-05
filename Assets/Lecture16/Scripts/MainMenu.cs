@@ -1,42 +1,61 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MainMenu : MonoBehaviour
 {
     [SerializeField]
-    private EventBus eventBus;
+    private Canvas _mainMenu;
 
     [SerializeField]
-    private Canvas mainMenu;
+    private Canvas _deathScreen;
+
+    [SerializeField]
+    private Canvas _winScreen;
+
+    private GameManager _gameManager;
+
+    public void Start()
+    {
+        _gameManager = IServiceLocator.Instance.GetService<GameManager>();
+    }
 
     public void OnStartGameButtonPressed()
     {
-        eventBus.Publish(new StartedGameEvent());
+        _gameManager.StartGame();
     }
 
     public void OnCloseMenuButtonPressed()
     {
-        eventBus.Publish(new ClosedMenuEvent());
+        HideMainMenu();
+        _gameManager.SwitchPauseGame();
     }
 
     public void OnExitGameMenuButtonPressed()
     {
-        eventBus.Publish(new ExitGameEvent());
+        _gameManager.ExitGame();
     }
 
     public void OnCloseGameMenuButtonPressed()
     {
-        eventBus.Publish(new ClosedGameEvent());
+        _gameManager.ToLobby();
     }
 
     public void ShowMainMenu()
     {
-        mainMenu.gameObject.SetActive(true);
+        _mainMenu.gameObject.SetActive(true);
     }
 
     public void HideMainMenu()
     {
-        mainMenu.gameObject.SetActive(false);
+        _mainMenu.gameObject.SetActive(false);
+    }
+
+    public void ShowDeathScreen()
+    {
+        _deathScreen.gameObject.SetActive(true);
+    }
+
+    public void ShowWinScreen()
+    {
+        _winScreen.gameObject.SetActive(true);
     }
 }

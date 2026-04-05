@@ -355,6 +355,56 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls: []
+--- !u!1 &417913870
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 417913871}
+  - component: {fileID: 417913872}
+  m_Layer: 0
+  m_Name: ServiceInstaller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &417913871
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417913870}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -56.14021, y: -120.295265, z: 19.218012}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 801945019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &417913872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417913870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4991b9ef588cd8d469c5a0f4ff4fc336, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _uiManager: {fileID: 0}
+  _spawnManager: {fileID: 0}
+  _scoreManager: {fileID: 0}
+  _gameManager: {fileID: 469647551}
+  _playerMoveController: {fileID: 0}
+  _playerFireController: {fileID: 0}
 --- !u!1 &469647549
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,9 +449,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24bf5ab1a0a149041b6d159d7610f307, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventBus: {fileID: 1689143938}
-  isPauseAllowed: 0
+  _isNotLobbyScene: 0
+  _winScore: 10
   pauseActionName: Pause
+  _lobbySceneName: Lecture16
+  _gameSceneName: Lecture20
 --- !u!1 &801945018
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,6 +485,7 @@ Transform:
   m_Children:
   - {fileID: 469647550}
   - {fileID: 1689143937}
+  - {fileID: 417913871}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &833918509
@@ -1449,8 +1502,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90c3a5e3cc1e44a4e87e6b6327dc129f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventBus: {fileID: 1689143938}
-  mainMenu: {fileID: 0}
+  _mainMenu: {fileID: 0}
+  _deathScreen: {fileID: 0}
+  _winScreen: {fileID: 0}
 --- !u!1 &1689143936
 GameObject:
   m_ObjectHideFlags: 0

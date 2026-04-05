@@ -67,10 +67,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84b095054e13deb4482b07fdb8cdd113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentEnemy: {fileID: 9093746163645633643}
+  parentEnemy: {fileID: 4605168574457347104}
   damageMultiplier: 3
   additionalScore: 0.5
-  eventBus: {fileID: 0}
 --- !u!54 &2744384451490804304
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -109,9 +108,9 @@ GameObject:
   - component: {fileID: 3416469838068505249}
   - component: {fileID: 3413552065296704796}
   - component: {fileID: 631435393828757623}
-  - component: {fileID: 9093746163645633643}
   - component: {fileID: 7134292015925138105}
   - component: {fileID: 5844550948224991588}
+  - component: {fileID: 4605168574457347104}
   m_Layer: 6
   m_Name: HumanEnemy
   m_TagString: Untagged
@@ -187,41 +186,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &9093746163645633643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763498746538708149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af94e05b3609b1d479386460ec47c067, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitPoints: 100
-  scoreForDeath: 1
-  shotEffect: {fileID: 6875301050153735501, guid: 391a34c4cb1fbde478d36472168d8a0f,
-    type: 3}
-  shotEffectDuration: 1
-  eventBus: {fileID: 0}
-  navMeshAgent: {fileID: 7134292015925138105}
-  patrolRadius: 10
-  patrolPointLimit: 1
-  restDuration: 2
-  player: {fileID: 0}
-  fieldOfView: 90
-  sightRange: 5
-  attackRange: 5
-  meleeAttackRate: 1
-  rangeAttackRate: 2
-  aggroTimeOut: 10
-  meleeAttackRange: 1.5
-  animator: {fileID: 8825448756733815971}
-  _weaponContainer: {fileID: 5641566040963163120}
-  layer:
-    serializedVersion: 2
-    m_Bits: 1024
 --- !u!195 &7134292015925138105
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -257,10 +221,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapons:
-  - {fileID: 913160852563240027, guid: 60e67dffde012964eae34f9501fbb24e, type: 3}
-  - {fileID: 97969539733170720, guid: ad0ced1d1b1a17f42b0817e6c8324f21, type: 3}
+  - {fileID: 4915950851072273787}
+  - {fileID: 7852174311560846387}
   weaponSpawnPoint: {fileID: 5641566040963163120}
-  eventBus: {fileID: 0}
+--- !u!114 &4605168574457347104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763498746538708149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95bbed0f118e324429a4177cd6ef0e54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPoints: 100
+  scoreForDeath: 1
+  shotEffect: {fileID: 6875301050153735501, guid: 391a34c4cb1fbde478d36472168d8a0f,
+    type: 3}
+  shotEffectDuration: 1
+  navMeshAgent: {fileID: 7134292015925138105}
+  patrolRadius: 10
+  patrolPointLimit: 1
+  restDuration: 2
+  fieldOfView: 90
+  sightRange: 5
+  attackRange: 5
+  meleeAttackRate: 1
+  rangeAttackRate: 2
+  aggroTimeOut: 10
+  meleeAttackRange: 1.5
+  animator: {fileID: 8825448756733815971}
+  _weaponContainer: {fileID: 5641566040963163120}
+  _enemyFireController: {fileID: 5844550948224991588}
+  _healthbarController: {fileID: 8939802097894978937}
+  layer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1 &4293872470125978121
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,11 +447,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5223666428728541797, guid: f60ac2c2a269fa54bb048dde40964945,
         type: 3}
-      propertyPath: enemy
-      value: 
-      objectReference: {fileID: 9093746163645633643}
-    - target: {fileID: 5223666428728541797, guid: f60ac2c2a269fa54bb048dde40964945,
-        type: 3}
       propertyPath: parentObject
       value: 
       objectReference: {fileID: 1763498746538708149}
@@ -523,6 +516,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 3778166406507263772}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8939802097894978937 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5223666428728541797, guid: f60ac2c2a269fa54bb048dde40964945,
+    type: 3}
+  m_PrefabInstance: {fileID: 3778166406507263772}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5395a6288c3477446ae46e9581c7dfb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5230022452165347616
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -549,37 +554,37 @@ PrefabInstance:
     - target: {fileID: 2534421578543533411, guid: 60e67dffde012964eae34f9501fbb24e,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: -0.049258374
       objectReference: {fileID: 0}
     - target: {fileID: 2534421578543533411, guid: 60e67dffde012964eae34f9501fbb24e,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: -0.61024374
       objectReference: {fileID: 0}
     - target: {fileID: 2534421578543533411, guid: 60e67dffde012964eae34f9501fbb24e,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.20913371
       objectReference: {fileID: 0}
     - target: {fileID: 2534421578543533411, guid: 60e67dffde012964eae34f9501fbb24e,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.7071068
+      value: -0.7625217
       objectReference: {fileID: 0}
     - target: {fileID: 2534421578543533411, guid: 60e67dffde012964eae34f9501fbb24e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 180
+      value: 195
       objectReference: {fileID: 0}
     - target: {fileID: 2534421578543533411, guid: 60e67dffde012964eae34f9501fbb24e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 270
+      value: 260
       objectReference: {fileID: 0}
     - target: {fileID: 2534421578543533411, guid: 60e67dffde012964eae34f9501fbb24e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 2911509349993830361, guid: 60e67dffde012964eae34f9501fbb24e,
         type: 3}
@@ -591,6 +596,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60e67dffde012964eae34f9501fbb24e, type: 3}
+--- !u!114 &4915950851072273787 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 913160852563240027, guid: 60e67dffde012964eae34f9501fbb24e,
+    type: 3}
+  m_PrefabInstance: {fileID: 5230022452165347616}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 529a4e6f7d5df57439d3431486259657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7762190673562698819 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2534421578543533411, guid: 60e67dffde012964eae34f9501fbb24e,
@@ -660,6 +677,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knife
       objectReference: {fileID: 0}
+    - target: {fileID: 3247493427351457695, guid: ad0ced1d1b1a17f42b0817e6c8324f21,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -671,3 +693,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 7900589360109762067}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7852174311560846387 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 97969539733170720, guid: ad0ced1d1b1a17f42b0817e6c8324f21,
+    type: 3}
+  m_PrefabInstance: {fileID: 7900589360109762067}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db00bfb93fc0e3a4fb39512c3e50a641, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

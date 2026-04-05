@@ -7,7 +7,8 @@ using System;
 public class UIManager : MonoBehaviour, IService
 {
     [SerializeField]
-    private TextMeshProUGUI scoreText, headshotsText, shotsText;
+    private TextMeshProUGUI scoreText, headshotsText, shotsText, winScoreText;
+
     [SerializeField]
     private MainMenu mainMenu;
 
@@ -18,7 +19,7 @@ public class UIManager : MonoBehaviour, IService
     private float _animationSpeed = 0.3f;
 
     [SerializeField]
-    private EventBus eventBus;
+    private Canvas _playerUI;
 
     private float initialValue = 0f;
 
@@ -26,9 +27,12 @@ public class UIManager : MonoBehaviour, IService
 
     private Coroutine currentAnimation;
 
+    private GameManager _gameManager;
+
     public void Awake()
     {
         maxHealthBarWidth = _playerHealthbarLevel.sizeDelta.x;
+        _gameManager = IServiceLocator.Instance.GetService<GameManager>();
     }
 
     void Start()
@@ -36,46 +40,29 @@ public class UIManager : MonoBehaviour, IService
         scoreText.text = $"Score: {initialValue}";
         headshotsText.text = $"Headshots: {initialValue}";
         shotsText.text = $"Shots: {initialValue}";
+        winScoreText.text = $"Get {_gameManager.GetWinScore()} score to win!";
     }
 
-    public void OnEnable()
+    public void UpdateScore(float currentScore)
     {
-        eventBus.Subscribe<UpdatedScoreEvent>(OnScoreUpdated);
-        eventBus.Subscribe<UpdatedShotsEvent>(OnShotsUpdated);
-        eventBus.Subscribe<UpdatedHeadshotsEvent>(OnHeadshotsUpdated);
-        eventBus.Subscribe<ShowedMenuEvent>(OnShowMainMenu);
-        eventBus.Subscribe<ClosedMenuEvent>(OnCloseMainMenu);
+        scoreText.text = $"Score: {currentScore}";
     }
 
-    public void OnDisable()
+    public void UpdateShots(int currentShots)
     {
-        eventBus.Unsubscribe<UpdatedScoreEvent>(OnScoreUpdated);
-        eventBus.Unsubscribe<UpdatedShotsEvent>(OnShotsUpdated);
-        eventBus.Unsubscribe<UpdatedHeadshotsEvent>(OnHeadshotsUpdated);
-        eventBus.Unsubscribe<ClosedMenuEvent>(OnCloseMainMenu);
+        shotsText.text = $"Shots: {currentShots}";
     }
-
-    void OnScoreUpdated(UpdatedScoreEvent subscribedEvent)
+    public void UpdateHeadshots(int currentHeadshots)
     {
-        scoreText.text = $"Score: {subscribedEvent.currentScore}";
+        headshotsText.text = $"Headshots: {currentHeadshots}";
     }
 
-    void OnShotsUpdated(UpdatedShotsEvent subscribedEvent)
-    {
-        shotsText.text = $"Shots: {subscribedEvent.currentValue}";
-    }
-
-    void OnHeadshotsUpdated(UpdatedHeadshotsEvent subscribedEvent)
-    {
-        headshotsText.text = $"Headshots: {subscribedEvent.currentValue}";
-    }
-
-    void OnShowMainMenu(ShowedMenuEvent subscribedEvent)
+    public void ShowMainMenu()
     {
         mainMenu.ShowMainMenu();
     }
 
-    void OnCloseMainMenu(ClosedMenuEvent subscribedEvent)
+    public void HideMainMenu()
     {
         mainMenu.HideMainMenu();
     }
@@ -108,4 +95,15 @@ public class UIManager : MonoBehaviour, IService
         _playerHealthbarLevel.sizeDelta = new Vector2(targetWidth, _playerHealthbarLevel.sizeDelta.y);
     }
 
+    public void ShowDeathScreen()
+    {
+        mainMenu.ShowDeathScreen();
+        _playerUI.gameObject.SetActive(false);
+    }
+
+    public void ShowWinScreen()
+    {
+        mainMenu.ShowWinScreen();
+        _playerUI.gameObject.SetActive(false);
+    }
 }

@@ -48,7 +48,7 @@ public class DefaultServiceLocator : IServiceLocator
     {
         var contractType = typeof(TContract);
         var isRegistered = _services.TryGetValue(contractType, out var registeredService);
-        if(isRegistered || !ReferenceEquals(registeredService, service))
+        if(!isRegistered || !ReferenceEquals(registeredService, service))
         {
             return false;
         }

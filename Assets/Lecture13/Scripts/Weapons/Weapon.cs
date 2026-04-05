@@ -10,7 +10,11 @@ public abstract class Weapon : MonoBehaviour, IWeapon
     [SerializeField] protected int maxAmmo = 10;
     [SerializeField] protected float reloadTime = 2f;
     [SerializeField] protected LayerMask targetLayer;
-    [SerializeField] protected EventBus eventBus;
+    [SerializeField] private float _recoilX = 2f;
+    [SerializeField] private float _recoilY = 0.5f;
+    [SerializeField] protected bool _isPlayerWeapon = false;
+    private ScoreManager _scoreManager;
+    private PlayerFireController _playerFireController;
 
     protected int currentAmmo;
     protected float nextFireTime;
@@ -23,6 +27,15 @@ public abstract class Weapon : MonoBehaviour, IWeapon
     protected virtual void Awake()
     {
         currentAmmo = maxAmmo;
+    }
+
+    void Start()
+    {
+        _scoreManager = IServiceLocator.Instance.GetService<ScoreManager>();
+        if(_isPlayerWeapon)
+        {
+            _playerFireController = IServiceLocator.Instance.GetService<PlayerFireController>();
+        }
     }
 
     public abstract void Fire(Vector3? targetDirection = null);
@@ -43,14 +56,10 @@ public abstract class Weapon : MonoBehaviour, IWeapon
 
     protected void MadeShot()
     {
-        if(eventBus != null)
+        if (_isPlayerWeapon)
         {
-            eventBus.Publish(new ShotMadeEvent());
+            _scoreManager.OnShotMade();
+            _playerFireController.ApplyRecoil(_recoilX, _recoilY);
         }
-    }
-
-    public void SetEventBus(EventBus eventBus)
-    {
-        this.eventBus = eventBus; 
     }
 }

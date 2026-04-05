@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IService
 {
     [SerializeField]
-    private EventBus eventBus;
+    private bool _isNotLobbyScene = false;
 
     [SerializeField]
-    private bool isPauseAllowed = false;
+    private float _winScore = 10f;
 
     [SerializeField]
     private string pauseActionName = "Pause";
@@ -16,78 +16,107 @@ public class GameManager : MonoBehaviour
     private bool isGamePaused = false;
     private InputAction pauseAction;
 
+    private UIManager _uiManager;
+    private PlayerMoveController _playerMoveController;
+    private PlayerFireController _playerFireController;
+
+    [SerializeField]
+    private string _lobbySceneName;
+
+    [SerializeField]
+    private string _gameSceneName;
+
+    private bool _isCanPause = true;
+
+    private void Awake()
+    {
+        if(_isNotLobbyScene) {
+            _uiManager = IServiceLocator.Instance.GetService<UIManager>();
+            _playerMoveController = IServiceLocator.Instance.GetService<PlayerMoveController>();
+            _playerFireController = IServiceLocator.Instance.GetService<PlayerFireController>();
+        }
+    }
+
 
     public void Start()
     {
         pauseAction = InputSystem.actions.FindAction(pauseActionName);
-        eventBus.Publish(new GamePausedEvent(false));
+        if(_isNotLobbyScene) 
+        {
+            _playerFireController.OnGamePaused(isGamePaused);
+            _playerMoveController.OnGamePaused(isGamePaused);
+        }
+
         Time.timeScale = 1f;
     }
 
     public void Update()
     {
         if(pauseAction != null) {
-            if (pauseAction.triggered && isPauseAllowed)
+            if (pauseAction.triggered && _isNotLobbyScene && _isCanPause)
             {
-                if (!isGamePaused)
-                {
-                    isGamePaused = true;
-                    eventBus.Publish(new ShowedMenuEvent());
-                    eventBus.Publish(new GamePausedEvent(isGamePaused));
-                    Time.timeScale = 0f;
-                }
-                else
-                {
-                    eventBus.Publish(new ClosedMenuEvent());
-                }
+                SwitchPauseGame();
             }
         }
     }
 
-    public void OnEnable()
+    public void StartGame()
     {
-        eventBus.Subscribe<StartedGameEvent>(OnStartGame);
-        eventBus.Subscribe<ClosedGameEvent>(OnGameClose);
-        eventBus.Subscribe<ExitGameEvent>(OnExitGame);
-        eventBus.Subscribe<ClosedMenuEvent>(OnClosedGameMenu);
+        SceneManager.LoadSceneAsync(_gameSceneName);
     }
 
-    public void OnDisable()
+    public void ToLobby()
     {
-        eventBus.Unsubscribe<StartedGameEvent>(OnStartGame);
-        eventBus.Unsubscribe<ClosedGameEvent>(OnGameClose);
-        eventBus.Unsubscribe<ExitGameEvent>(OnExitGame);
-        eventBus.Unsubscribe<ClosedMenuEvent>(OnClosedGameMenu);
+        SceneManager.LoadSceneAsync(_lobbySceneName);
     }
 
-    void OnStartGame(StartedGameEvent subscribedEvent)
-    {
-        SceneManager.LoadSceneAsync("Lecture19");
-    }
+    public void ExitGame()
 
-    void OnGameClose(ClosedGameEvent subscribedEvent)
-    {
-        SceneManager.LoadSceneAsync("Lecture16");
-    }
-
-    void OnExitGame(ExitGameEvent subscribedEvent)
     {
         Application.Quit();
     }
 
-    void OnClosedGameMenu(ClosedMenuEvent subscribedEvent)
+    public void SwitchPauseGame()
     {
         if (!isGamePaused)
         {
             isGamePaused = true;
-            eventBus.Publish(new GamePausedEvent(isGamePaused));
             Time.timeScale = 0f;
+            _uiManager.ShowMainMenu();
         }
         else
         {
             isGamePaused = false;
-            eventBus.Publish(new GamePausedEvent(isGamePaused));
             Time.timeScale = 1f;
+            _uiManager.HideMainMenu();
         }
+        _playerFireController.OnGamePaused(isGamePaused);
+        _playerMoveController.OnGamePaused(isGamePaused);
+    }
+
+    public void OnPlayerDeath()
+    {
+        isGamePaused = true;
+        Time.timeScale = 0f;
+        _playerFireController.OnGamePaused(isGamePaused);
+        _playerMoveController.OnGamePaused(isGamePaused);
+        _uiManager.ShowDeathScreen();
+        _isCanPause = false;
+
+    }
+
+    public void OnPlayerWin()
+    {
+        isGamePaused = true;
+        Time.timeScale = 0f;
+        _playerFireController.OnGamePaused(isGamePaused);
+        _playerMoveController.OnGamePaused(isGamePaused);
+        _uiManager.ShowWinScreen();
+        _isCanPause = false;
+    }
+
+    public float GetWinScore()
+    {
+        return _winScore;
     }
 }

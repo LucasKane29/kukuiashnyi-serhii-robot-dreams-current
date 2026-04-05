@@ -10,25 +10,25 @@ using UnityEngine.VFX;
 
 public abstract class Enemy : MonoBehaviour, IDamageable
 {
-    [SerializeField] private float hitPoints = 10f;
+    [SerializeField] private float hitPoints = 100f;
     [SerializeField] private float scoreForDeath = 1.0f;
     [SerializeField] private GameObject shotEffect;
     [SerializeField] private float shotEffectDuration = 0.5f;
-    [SerializeField] private EventBus eventBus;
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private float patrolRadius = 10f;
     [SerializeField] private int patrolPointLimit = 5;
     [SerializeField] private float restDuration = 5f;
-    [SerializeField] private Transform player;
     [SerializeField] private float fieldOfView = 60f;
     [SerializeField] private float sightRange = 5f;
     [SerializeField] private float attackRange = 3f;
     [SerializeField] private float meleeAttackRate = 2f;
     [SerializeField] private float rangeAttackRate = 3f;
     [SerializeField] private float aggroTimeOut = 10f;
-    [SerializeField] private float meleeAttackRange = 1f;
+    [SerializeField] private float meleeAttackRange = 1f; 
     [SerializeField] private Animator animator;
     [SerializeField] private Transform _weaponContainer;
+    [SerializeField] private EnemyFireController _enemyFireController;
+    [SerializeField] private HealthbarController _healthbarController;
 
     [SerializeField] private LayerMask layer;
 
@@ -36,7 +36,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     private HashSet<VisualEffect> activeEffects = new HashSet<VisualEffect>();
 
     private float maxHealth;
-    private BehaviourTree behaviourTree;
     private bool isAttacking = false;
     private bool isAggro = false;
     private bool isResettingAggro = false;
@@ -47,21 +46,29 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     private Vector3 damagerPosition = Vector3.zero;
     private Collider[] colliders = new Collider[10];
     private LogService _logService;
-    private EnemyFireController _enemyFireController;
+    private ScoreManager _scoreManager;
+    private Transform _player;
+    private BehaviourTree _behaviourTree = new BehaviourTree("EnemyBehaviour");
 
-    void Start()
+
+    void Awake()
     {
         maxHealth = hitPoints;
         currentScoreForDeath = scoreForDeath;
         _logService = IServiceLocator.Instance.GetService<LogService>();
-        _enemyFireController = IServiceLocator.Instance.GetService<EnemyFireController>();
+        _scoreManager = IServiceLocator.Instance.GetService<ScoreManager>();
+        if (_enemyFireController == null)
+            _enemyFireController = GetComponent<EnemyFireController>();
+    }
 
+    void Start()
+    {
         var chaseNode = new SequenceNode("Chase");
         chaseNode.AddChild(new Leaf("CheckIfPlayerInRange", new ConditionStrategy(() => { 
             return isPlayerVisible() && !isPlayerInRangeAttackRange();
         })));
 
-        chaseNode.AddChild(new Leaf("Chasing", new ChaseStrategy(navMeshAgent, () => player.position, isPlayerVisible)));
+        chaseNode.AddChild(new Leaf("Chasing", new ChaseStrategy(navMeshAgent, () => _player.position, isPlayerVisible)));
 
         var chaseToDamagerNode = new SequenceNode("ChaseToDamager");
         chaseToDamagerNode.AddChild(new Leaf("CheckIsCanChaising", new ConditionStrategy(() => {
@@ -74,13 +81,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         meleeAttackNode.AddChild(new Leaf("CheckIfPlayerInMeleeRange", new ConditionStrategy(() => {
             return isPlayerInMeleeAttackRange();
         })));
-        meleeAttackNode.AddChild(new Leaf("MeleeAttack", new MeleeAttackStrategy(navMeshAgent, () => player.position, this, isPlayerInMeleeAttackRange)));
+        meleeAttackNode.AddChild(new Leaf("MeleeAttack", new MeleeAttackStrategy(navMeshAgent, () => _player.position, this, isPlayerInMeleeAttackRange)));
 
         var rangeAttackNode = new SequenceNode("RangeAttack");
         rangeAttackNode.AddChild(new Leaf("CheckIfPlayerInRangeAttack", new ConditionStrategy(() => {
             return isPlayerInRangeAttackRange();
         })));
-        rangeAttackNode.AddChild(new Leaf("RangeAttack", new RangeAttackStrategy(navMeshAgent, () => player.position, this, isPlayerInRangeAttackRange)));
+        rangeAttackNode.AddChild(new Leaf("RangeAttack", new RangeAttackStrategy(navMeshAgent, () => _player.position, this, isPlayerInRangeAttackRange)));
 
         var patrolAndRestNode = new SequenceNode("PatrolAndRest");
         patrolAndRestNode.AddChild(new Leaf("Patroling", new PatrolStrategy(navMeshAgent, transform, patrolRadius, patrolPointLimit)));
@@ -95,14 +102,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             patrolAndRestNode
         });
 
-        behaviourTree = new BehaviourTree("EnemyBehaviour");
-        behaviourTree.AddChild(selectorNode);
+        _behaviourTree.AddChild(selectorNode);
     }
 
     void Update()
     {
         _isPlayerVisible = isPlayerVisible();
-        behaviourTree.Process();
+        _behaviourTree.Process();
         if (GetAggro() && !isResettingAggro && !_isPlayerVisible)
         {
             resetAggro = StartCoroutine(ResetAggroStatus());
@@ -114,7 +120,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         navMeshAgent.updateRotation = !_isPlayerVisible && !navMeshAgent.isStopped;
         if (_isPlayerVisible)
         {
-            Vector3 direction = (player.position - transform.position);
+            Vector3 direction = (_player.position - transform.position);
             direction.y = 0;
             transform.rotation = Quaternion.LookRotation(direction);
         }
@@ -131,7 +137,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             hitPoints = 0;
         _logService.Log($"{objectName} took {damage} damage! Current HP: {hitPoints}/{maxHealth}");
         this.damagerPosition = damagerPosition;
-        eventBus.Publish(new HealthChangedEvent(this.gameObject, hitPoints, maxHealth));
+        _healthbarController.UpdateBar(hitPoints, maxHealth);
         StartCoroutine(ShowShotEffect(hitPoint));
 
         if(resetAggro != null)
@@ -156,29 +162,16 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         activeEffects.Clear();
 
         _logService.Log($"{gameObject.name} died!");
-        eventBus.Publish(new EnemyKilledEvent(currentScoreForDeath));
-        Destroy(gameObject);
+        _scoreManager.AddScore(currentScoreForDeath);
+        gameObject.SetActive(false);
     }
 
     public abstract void runDieAnimation();
     public abstract void runTakeDamageAnimation();
 
-    public void OnEnable()
+    public void IncreaseScoreForDeath(float additionalScore)
     {
-        eventBus.Subscribe<HeadshotMadeEvent>(OnHeadshotGot);
-    }
-
-    public void OnDisable()
-    {
-        eventBus.Unsubscribe<HeadshotMadeEvent>(OnHeadshotGot);
-    }
-
-    void OnHeadshotGot(HeadshotMadeEvent subscribedEvent)
-    {
-        if (this.GetInstanceID() != subscribedEvent.enemy.GetInstanceID())
-            return;
-
-        currentScoreForDeath += subscribedEvent.additionalScore;
+        currentScoreForDeath +=additionalScore;
         _logService.Log($"Score for killing {gameObject.name} is now {currentScoreForDeath}");
     }
 
@@ -214,7 +207,11 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         Gizmos.DrawLine(transform.position + leftEdge * sightRange, transform.position + rightEdge * sightRange);
 
         Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(transform.position, player.position);
+        if(_player != null)
+        {
+            Gizmos.DrawLine(transform.position, _player.position);
+        }
+
         if (GetAggro())
         {
             Gizmos.color = Color.red;
@@ -230,13 +227,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         }
         else
         {
-            Vector3 directionToPlayer = (player.position - transform.position);
+            Vector3 directionToPlayer = (_player.position - transform.position);
             float fieldOfViewAngle = Vector3.Angle(transform.forward, directionToPlayer);
             if (directionToPlayer.magnitude <= sightRange && fieldOfViewAngle <= fieldOfView / 2)
             {
                 if (Physics.Raycast(transform.position, directionToPlayer.normalized, out RaycastHit hit, sightRange))
                 {
-                    if(hit.transform == player)
+                    if(hit.transform == _player)
                     {
                         isAggro = true;
                         return true; 
@@ -249,12 +246,12 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     public bool isPlayerInMeleeAttackRange()
     {
-        return _isPlayerVisible && Vector3.Distance(transform.position, player.position) <= meleeAttackRange && navMeshAgent.desiredVelocity.magnitude == 0;
+        return _isPlayerVisible && Vector3.Distance(transform.position, _player.position) <= meleeAttackRange && navMeshAgent.desiredVelocity.magnitude == 0;
     }
 
     public bool isPlayerInRangeAttackRange()
     {
-        float distanceToAim = Vector3.Distance(transform.position, player.position);
+        float distanceToAim = Vector3.Distance(transform.position, _player.position);
         return _isPlayerVisible && distanceToAim <= attackRange && distanceToAim > meleeAttackRange && navMeshAgent.desiredVelocity.magnitude == 0;
     }
 
@@ -344,12 +341,12 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         int elementCount = Physics.OverlapSphereNonAlloc(transform.position, sightRange, colliders, layer);
         for (int i = 0; i < elementCount; i++)
         {
-            if (colliders[i].transform == player)
+            if (colliders[i].transform == _player)
             {
-                Vector3 directionToPlayer = (player.position - transform.position);
+                Vector3 directionToPlayer = (_player.position - transform.position);
                 if (Physics.Raycast(transform.position, directionToPlayer.normalized, out RaycastHit hit, sightRange, layer))
                 {
-                    if (hit.transform == player)
+                    if (hit.transform == _player)
                     {
                         isAggro = true;
                         return true;
@@ -364,4 +361,25 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     {
         return isAggro;
     }
+
+    public void SetPlayer(Transform player)
+    {
+        _player = player;
+    }
+
+    public bool IsDead()
+    {
+        return isDead;
+    }
+
+    public void ResetStatus()
+    {
+        ResetAggroStatus();
+        _behaviourTree.Reset();
+        isDead = false;
+        isAttacking = false;    
+        hitPoints = maxHealth;
+        _healthbarController.ResetBar();
+    }
+
 }

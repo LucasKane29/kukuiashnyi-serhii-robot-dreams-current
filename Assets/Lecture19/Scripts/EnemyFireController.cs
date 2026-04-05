@@ -4,13 +4,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class EnemyFireController : MonoBehaviour, IService
+public class EnemyFireController : MonoBehaviour
 {
     [Header("Fire Settings")]
 
     [SerializeField] private Weapon[] weapons;
     [SerializeField] private Transform weaponSpawnPoint;
-    [SerializeField] private EventBus eventBus;
 
 
     private int currentWeaponIndex = 0;
@@ -62,11 +61,6 @@ public class EnemyFireController : MonoBehaviour, IService
         if (currentWeapon == null)
             return;
         currentWeapon?.Fire();
-    }
-
-    public void SetEventBus(EventBus eventBus)
-    {
-        this.eventBus = eventBus;
     }
 
     public void HideWeapons()

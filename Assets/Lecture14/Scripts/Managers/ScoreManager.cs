@@ -1,73 +1,65 @@
 using System;
 using UnityEngine;
 
-public class ScoreManager: MonoBehaviour
+public class ScoreManager: MonoBehaviour, IService
 {
-    [SerializeField]
-    private EventBus eventBus;
+    public float _score { get; private set; }
+    public int _headshots { get; private set; }
+    public int _shots { get; private set; }
 
-    public float score { get; private set; }
-    public float headshots { get; private set; }
-    public float shots { get; private set; }
+    private UIManager _uiManager;
+    private GameManager _gameManager;
 
     public void AddScore(float value)
     {
-        score += value;
+        _score += value;
+        RedrawScore();
+
+        if(_score >= _gameManager.GetWinScore())
+        {
+            _gameManager.OnPlayerWin();
+        }
+    }
+
+    void Awake()
+    {
+        _score = 0;
+        _headshots = 0;
+        _shots = 0;
+        _uiManager = IServiceLocator.Instance.GetService<UIManager>();
+        _gameManager = IServiceLocator.Instance.GetService<GameManager>();
+    }
+
+    void Start()
+    {
         RedrawScore();
     }
 
-    public void Awake()
+    public void OnShotMade()
     {
-        score = 0;
-        headshots = 0;
-        shots = 0;
-        RedrawScore();
-    }
-
-    public void OnEnable()
-    {
-        eventBus.Subscribe<EnemyKilledEvent>(OnEnemyKilled);
-        eventBus.Subscribe<ShotMadeEvent>(OnShotMade);
-        eventBus.Subscribe<HeadshotMadeEvent>(OnHeadshotMade);
-    }
-
-    public void OnDisable()
-    {
-        eventBus.Unsubscribe<EnemyKilledEvent>(OnEnemyKilled);
-        eventBus.Unsubscribe<ShotMadeEvent>(OnShotMade);
-        eventBus.Unsubscribe<HeadshotMadeEvent>(OnHeadshotMade);
-    }
-
-    void OnEnemyKilled(EnemyKilledEvent subscribedEvent)
-    {
-        AddScore(subscribedEvent.score);
-    }
-
-    void OnShotMade(ShotMadeEvent subscribedEvent)
-    {
-        shots += 1;
+        _shots += 1;
         RedrawShots();
         
     }
 
-    void OnHeadshotMade(HeadshotMadeEvent subscribedEvent)
+    public void OnHeadshotMade()
     {
-        headshots += 1;
+        _headshots += 1;
         RedrawHeadshots();
     }
 
     void RedrawScore()
     {
-        eventBus.Publish(new UpdatedScoreEvent(score));
+        _uiManager.UpdateScore(_score);
     }
 
     void RedrawShots()
     {
-        eventBus.Publish(new UpdatedShotsEvent(shots));
+        _uiManager.UpdateShots(_shots);
     }
 
     void RedrawHeadshots()
     {
-        eventBus.Publish(new UpdatedHeadshotsEvent(headshots));
+        _uiManager.UpdateHeadshots(_headshots);
     }
 }

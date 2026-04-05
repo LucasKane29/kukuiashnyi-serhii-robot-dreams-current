@@ -278,7 +278,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 1216
-  eventBus: {fileID: 0}
+  _isPlayerWeapon: 1
   range: 100
   laserBoltPrefab: {fileID: 6498196808488522941, guid: c84e29c1c7249334d8a093407c560cb8,
     type: 3}

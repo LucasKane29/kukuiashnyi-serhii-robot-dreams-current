@@ -7,13 +7,17 @@ public class EnemyHead : MonoBehaviour, IDamageable
     [SerializeField] private Enemy parentEnemy;
     [SerializeField] private float damageMultiplier;
     [SerializeField] private float additionalScore = 0f;
+    private ScoreManager _scoreManger;
 
-    [SerializeField]
-    private EventBus eventBus;
+    void Start()
+    {
+        _scoreManger = IServiceLocator.Instance.GetService<ScoreManager>();
+    }
 
     public void TakeDamage(float damage, Vector3 hitPoint, Vector3 damagerPosition)
     {
         parentEnemy.TakeDamage(damage * damageMultiplier, hitPoint, damagerPosition);
-        eventBus.Publish(new HeadshotMadeEvent(parentEnemy, additionalScore));
+        parentEnemy.IncreaseScoreForDeath(additionalScore);
+        _scoreManger.OnHeadshotMade();
     }
 }

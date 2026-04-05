@@ -42,8 +42,16 @@ public class BlasterWeapon : Weapon
 
         if (flashEffect != null)
         {
-            GameObject flash = Instantiate(flashEffect, muzzlePosition.position, muzzlePosition.rotation, muzzlePosition);
-            Destroy(flash, flashLiveTime);
+            if (_isPlayerWeapon)
+            {
+                GameObject flash = Instantiate(flashEffect, muzzlePosition.position, muzzlePosition.rotation, muzzlePosition);
+                Destroy(flash, flashLiveTime);
+            }
+            else
+            {
+                GameObject flash = Instantiate(flashEffect, muzzlePosition.position, muzzlePosition.rotation);
+                Destroy(flash, flashLiveTime);
+            }
         }
     }
 

@@ -3,64 +3,67 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerFireController : MonoBehaviour
+namespace Lesson12
 {
-    [SerializeField]
-    private Transform firePoint;
-
-    [SerializeField]
-    private float explosionRadius = 1f, explosionForce = 100f;
-
-    [SerializeField]
-    private LayerMask layerMask;
-
-    [SerializeField]
-    private string attackActionName = "Attack";
-
-    private InputAction attackAction;
-
-    void Start()
+    public class PlayerFireController : MonoBehaviour
     {
-        attackAction = InputSystem.actions.FindAction(attackActionName);
-    }
+        [SerializeField]
+        private Transform firePoint;
 
-    void FixedUpdate()
-    {
-        RaycastHit hit;
+        [SerializeField]
+        private float explosionRadius = 1f, explosionForce = 100f;
 
-        if (attackAction.ReadValue<float>() > 0 && firePoint != null)
+        [SerializeField]
+        private LayerMask layerMask;
+
+        [SerializeField]
+        private string attackActionName = "Attack";
+
+        private InputAction attackAction;
+
+        void Start()
         {
-            hit = this.Fire(firePoint);
+            attackAction = InputSystem.actions.FindAction(attackActionName);
         }
-    }
 
-    private RaycastHit Fire(Transform firePoint)
-    {
-        RaycastHit hit;
-
-        HashSet<Rigidbody> affectedBodies = new HashSet<Rigidbody>();
-
-        if (Physics.Raycast(firePoint.position, firePoint.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
+        void FixedUpdate()
         {
-            Debug.DrawRay(firePoint.position, firePoint.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-            Collider[] colliders = Physics.OverlapSphere(hit.point, explosionRadius, layerMask);
+            RaycastHit hit;
 
-            foreach (Collider collider in colliders)
+            if (attackAction.ReadValue<float>() > 0 && firePoint != null)
             {
-                Rigidbody rb = collider.attachedRigidbody;
-                if (rb != null && affectedBodies.Add(rb))
-                {
-                    Vector3 forceDirection = (rb.position - hit.point).normalized;
-                    rb.AddForce(forceDirection * explosionForce);
-                }
+                hit = this.Fire(firePoint);
             }
-            affectedBodies.Clear();
         }
-        else
+
+        private RaycastHit Fire(Transform firePoint)
         {
-            Debug.DrawRay(firePoint.position, firePoint.TransformDirection(Vector3.forward) * 1000, Color.white);
+            RaycastHit hit;
+
+            HashSet<Rigidbody> affectedBodies = new HashSet<Rigidbody>();
+
+            if (Physics.Raycast(firePoint.position, firePoint.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))
+            {
+                Debug.DrawRay(firePoint.position, firePoint.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+                Collider[] colliders = Physics.OverlapSphere(hit.point, explosionRadius, layerMask);
+
+                foreach (Collider collider in colliders)
+                {
+                    Rigidbody rb = collider.attachedRigidbody;
+                    if (rb != null && affectedBodies.Add(rb))
+                    {
+                        Vector3 forceDirection = (rb.position - hit.point).normalized;
+                        rb.AddForce(forceDirection * explosionForce);
+                    }
+                }
+                affectedBodies.Clear();
+            }
+            else
+            {
+                Debug.DrawRay(firePoint.position, firePoint.TransformDirection(Vector3.forward) * 1000, Color.white);
+            }
+
+            return hit;
         }
-        
-        return hit;
     }
 }
