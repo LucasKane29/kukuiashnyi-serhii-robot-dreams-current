@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerHealthController : MonoBehaviour, IDamageable
+public class PlayerHealthController : MonoBehaviour, IDamageable, IHealable
 {
     [SerializeField] private float maxHealth = 100f;
 
@@ -32,5 +32,12 @@ public class PlayerHealthController : MonoBehaviour, IDamageable
             Debug.Log($"{objectName} has died!");
             _gameManager.OnPlayerDeath();
         }
+    }
+
+    public void Heal(float amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        _uiManager.UpdatePlayerHealthBar(currentHealth, maxHealth);
     }
 }

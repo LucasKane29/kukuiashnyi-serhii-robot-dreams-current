@@ -9,6 +9,8 @@ public class ServiceInstaller : MonoBehaviour
     [SerializeField] GameManager _gameManager;
     [SerializeField] PlayerMoveController _playerMoveController;
     [SerializeField] PlayerFireController _playerFireController;
+    [SerializeField] InventoryManager _inventoryManager;
+    [SerializeField] MerchantController _merchantController;
     private readonly LogService _logService = new();
 
     private void Awake()
@@ -20,6 +22,8 @@ public class ServiceInstaller : MonoBehaviour
         IServiceLocator.Instance.TryRegisterService<GameManager>(_gameManager);
         IServiceLocator.Instance.TryRegisterService<PlayerMoveController>(_playerMoveController);
         IServiceLocator.Instance.TryRegisterService<PlayerFireController>(_playerFireController);
+        IServiceLocator.Instance.TryRegisterService<InventoryManager>(_inventoryManager);
+        IServiceLocator.Instance.TryRegisterService<MerchantController>(_merchantController);
     }
 
     // Update is called once per frame
@@ -32,5 +36,7 @@ public class ServiceInstaller : MonoBehaviour
         IServiceLocator.Instance.TryUnregisterService<GameManager>(_gameManager);
         IServiceLocator.Instance.TryUnregisterService<PlayerMoveController>(_playerMoveController);
         IServiceLocator.Instance.TryUnregisterService<PlayerFireController>(_playerFireController);
+        IServiceLocator.Instance.TryUnregisterService<InventoryManager>(_inventoryManager);
+        IServiceLocator.Instance.TryUnregisterService<MerchantController>(_merchantController);
     }
 }

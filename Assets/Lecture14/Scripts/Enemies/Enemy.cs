@@ -31,6 +31,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private HealthbarController _healthbarController;
 
     [SerializeField] private LayerMask layer;
+    [SerializeField] private GameObject _dropItem;
 
     private float currentScoreForDeath;
     private HashSet<VisualEffect> activeEffects = new HashSet<VisualEffect>();
@@ -49,7 +50,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     private ScoreManager _scoreManager;
     private Transform _player;
     private BehaviourTree _behaviourTree = new BehaviourTree("EnemyBehaviour");
-
 
     void Awake()
     {
@@ -164,6 +164,12 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         _logService.Log($"{gameObject.name} died!");
         _scoreManager.AddScore(currentScoreForDeath);
         gameObject.SetActive(false);
+
+        if(_dropItem != null)
+        {
+            Vector3 dropPosition = transform.position + Vector3.up * 0.15f;
+            Instantiate(_dropItem, dropPosition, Quaternion.identity);
+        }
     }
 
     public abstract void runDieAnimation();

@@ -25,8 +25,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnCloseMenuButtonPressed()
     {
-        HideMainMenu();
-        _gameManager.SwitchPauseGame();
+        _gameManager.ResumeGame();
     }
 
     public void OnExitGameMenuButtonPressed()

@@ -259,6 +259,8 @@ MonoBehaviour:
   layer:
     serializedVersion: 2
     m_Bits: 1024
+  _dropItem: {fileID: 2587480676778881544, guid: 72466a65bb355314eb030fb5153e9f12,
+    type: 3}
 --- !u!1 &4293872470125978121
 GameObject:
   m_ObjectHideFlags: 0

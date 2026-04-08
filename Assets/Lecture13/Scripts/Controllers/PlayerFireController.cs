@@ -104,4 +104,9 @@ public class PlayerFireController : MonoBehaviour, IService
     {
         _targetRecoil += new Vector3(-recoilY, Random.Range(-recoilX, recoilX), 0f);
     }
+
+    public void EquipWeapon(WeaponItemData weaponItemData)
+    {
+        return;
+    }
 }

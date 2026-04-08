@@ -405,6 +405,7 @@ MonoBehaviour:
   _gameManager: {fileID: 469647551}
   _playerMoveController: {fileID: 0}
   _playerFireController: {fileID: 0}
+  _inventoryManager: {fileID: 0}
 --- !u!1 &469647549
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,8 +453,9 @@ MonoBehaviour:
   _isNotLobbyScene: 0
   _winScore: 10
   pauseActionName: Pause
+  inventoryActionName: Inventory
   _lobbySceneName: Lecture16
-  _gameSceneName: Lecture20
+  _gameSceneName: Lecture21
 --- !u!1 &801945018
 GameObject:
   m_ObjectHideFlags: 0

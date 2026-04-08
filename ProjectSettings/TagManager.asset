@@ -16,7 +16,7 @@ TagManager:
   - MainMenu
   - Walkable
   - Player
-  - 
+  - Inventory
   - 
   - 
   - 
@@ -43,6 +43,9 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 3991512905
+    locked: 0
+  - name: Inventory
+    uniqueID: 3665491403
     locked: 0
   - name: MainMenu
     uniqueID: 1675899927
