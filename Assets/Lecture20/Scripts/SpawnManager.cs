@@ -20,6 +20,12 @@ public class SpawnManager : MonoBehaviour, IService
     [SerializeField]
     private float _respawnEnemyCooldown = 10f;
 
+    [SerializeField]
+    private bool _isSpawnEnabled = true;
+
+    [SerializeField]
+    private EventBus _eventBus;
+
     private Coroutine _spawnCoroutine;
     private HashSet<Enemy> _pendingRespawn = new HashSet<Enemy>();
 
@@ -35,6 +41,7 @@ public class SpawnManager : MonoBehaviour, IService
             var enemy = Instantiate(_enemyPrefab, _spawnPoints[spawnPointIndex].position, Quaternion.identity, _enemiesContainer);
             Enemy _enemy = enemy.GetComponent<Enemy>();
             _enemy.SetPlayer(_player);
+            _enemy.SetEventBus(_eventBus);
             _enemiesPool.Add(_enemy);
             enemy.SetActive(false);
         }
@@ -76,7 +83,8 @@ public class SpawnManager : MonoBehaviour, IService
 
     void Start()
     {
-        _spawnCoroutine = StartCoroutine(SpawnEnemiesRoutine());
+        if(_isSpawnEnabled)
+            _spawnCoroutine = StartCoroutine(SpawnEnemiesRoutine());
     }
 
     IEnumerator SpawnEnemiesRoutine()

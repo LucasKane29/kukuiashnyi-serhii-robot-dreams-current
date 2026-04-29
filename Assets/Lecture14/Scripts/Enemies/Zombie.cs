@@ -1,6 +1,7 @@
 
 public class Zombie : Enemy
 {
+    /*
     public override void runDieAnimation()
     {
         //throw new System.NotImplementedException();
@@ -10,4 +11,5 @@ public class Zombie : Enemy
     {
         //throw new System.NotImplementedException();
     }
+    */
 }

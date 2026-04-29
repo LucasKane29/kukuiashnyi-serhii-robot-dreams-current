@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bf42bc1a36d1d04f95ac96263a9cbaf, type: 3}
+  m_Name: KnifeSwish
+  m_EditorClassIdentifier: 
+  id: knife_swish
+  audioClips:
+  - {fileID: 8300000, guid: 2d0962bf2daee7448a03511a1d158c88, type: 3}
+  - {fileID: 8300000, guid: af6e18a939499564f9f73cc3b9e567f6, type: 3}
+  - {fileID: 8300000, guid: fa7ec1c7aec7cd74e80b79e41bcc9e9d, type: 3}
+  - {fileID: 8300000, guid: 5e47ecbd073566045b98eaf63a078f2c, type: 3}
+  - {fileID: 8300000, guid: 8fd3177ae4aa5f4489c59488470091f2, type: 3}
+  mixerGroup: {fileID: 226988530614384555, guid: a125c84d7640ef04db39c2ae32860ed7,
+    type: 2}
+  volume: 1
+  pitch: 1
+  pitchVariance: 0.1
+  priority: 128
+  loop: 0
+  is3D: 1
+  minDistance: 1
+  maxDistance: 25
+  rolloffMode: 0
+  spatialBlend: 0
+  dopplerLevel: 0
+  spread: 0
+  customRolloff:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  useCustomRolloff: 0

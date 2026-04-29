@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5461328655464614583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1283774820810589705}
+  m_Layer: 0
+  m_Name: WeaponGrip
+  m_TagString: Untagged
+  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1283774820810589705
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5461328655464614583}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: -1, w: 0}
+  m_LocalPosition: {x: -3.7, y: 23.18, z: -5.95}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3150323970788396669}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
 --- !u!1 &8006110493243072924
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,6 +268,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2100426c73a872a4cb3e43f950b040bd,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1283774820810589705}
     - targetCorrespondingSourceObject: {fileID: -5626266960151830294, guid: 2100426c73a872a4cb3e43f950b040bd,
         type: 3}
       insertIndex: -1
@@ -278,7 +313,11 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 1216
+  _recoilX: 2
+  _recoilY: 0.5
   _isPlayerWeapon: 1
+  _weaponGrip: {fileID: 1283774820810589705}
+  _soundId: bluster_shot
   range: 100
   laserBoltPrefab: {fileID: 6498196808488522941, guid: c84e29c1c7249334d8a093407c560cb8,
     type: 3}
@@ -286,3 +325,9 @@ MonoBehaviour:
   hitForce: 3
   flashEffect: {fileID: 3082914292398189469, guid: 4c7db5db8d3baf84892c41a5c09427e9,
     type: 3}
+--- !u!4 &3150323970788396669 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2100426c73a872a4cb3e43f950b040bd,
+    type: 3}
+  m_PrefabInstance: {fileID: 3184761305563195798}
+  m_PrefabAsset: {fileID: 0}

@@ -1,87 +1,137 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMoveController : MonoBehaviour, IService
+public class PlayerMoveController : MonoBehaviour, IService, ISaveable
 {
     [Header("Move Settings")]
 
     [SerializeField]
-    private CharacterController characterController;
+    private CharacterController _characterController;
 
     [SerializeField]
-    private float speed = 1f, rotationSpeed = 5f;
+    private float _walkSpeed = 0.5f, _runSpeed = 1f, _rotationSpeed = 5f;
 
     [SerializeField]
-    private float topClamp = 10f, bottomClamp = -45f;
+    private float _topClamp = 10f, _bottomClamp = -45f;
 
     [SerializeField]
-    private float lookRange = 100f;
+    private float _lookRange = 100f;
 
     [SerializeField]
-    private Transform followTarget, weaponTarget, playerCamera;
+    private Transform _followTarget, _weaponTarget, _playerCamera;
 
     [SerializeField]
-    private string moveActionName = "Move", lookActionName = "Look";
+    private string _moveActionName = "Move", _lookActionName = "Look", _sprintActionName = "Sprint";
 
-    private InputAction moveAction, lookAction;
-    private float yaw = 0f;
-    private float pitch = 0f;
-    private Vector2 movementVector;
+    [SerializeField]
+    private Animator _animator;
+
+    [SerializeField]
+    private Transform _aimTarget;
+
+    [SerializeField]
+    private float _minAimDistance = 3f;
+    [SerializeField]
+    private float _dampTime = 0.1f;
+
+    private static readonly int VelocityXHash = Animator.StringToHash("VelocityX");
+    private static readonly int VelocityZHash = Animator.StringToHash("VelocityZ");
+
+    private InputAction _moveAction, _lookAction, _sprintAction;
+    private float _yaw = 0f;
+    private float _pitch = 0f;
+    private Vector2 _movementVector;
+
+    private SaveSystemManager _saveSystemManager;
+    private PlayerFireController _playerFireController;
+
+    void Awake()
+    {
+        _saveSystemManager = IServiceLocator.Instance.GetService<SaveSystemManager>();
+        _saveSystemManager.RegisterSaveable(this);
+        _playerFireController = IServiceLocator.Instance.GetService<PlayerFireController>();
+    }
+
+    void OnDestroy()
+    {
+        if (_saveSystemManager != null)
+        {
+            _saveSystemManager.UnregisterSaveable(this);
+        }
+    }
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        if (characterController == null)
+        if (_characterController == null)
         {
-            characterController = GetComponent<CharacterController>();
+            _characterController = GetComponent<CharacterController>();
         }
 
-        moveAction = InputSystem.actions.FindAction(moveActionName);
-        lookAction = InputSystem.actions.FindAction(lookActionName);
+        _moveAction = InputSystem.actions.FindAction(_moveActionName);
+        _lookAction = InputSystem.actions.FindAction(_lookActionName);
+        _sprintAction = InputSystem.actions.FindAction(_sprintActionName);
 
-        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
-        followTarget.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
-        weaponTarget.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
+        _playerCamera.transform.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
+        _weaponTarget.transform.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
     }
 
     void Update()
     {
-        movementVector = moveAction.ReadValue<Vector2>();
-        Vector2 lookVector = lookAction.ReadValue<Vector2>();
+        _movementVector = _moveAction.ReadValue<Vector2>();
+        Vector2 lookVector = _lookAction.ReadValue<Vector2>();
 
-        yaw += lookVector.x * rotationSpeed * Time.deltaTime;
+        _yaw += lookVector.x * _rotationSpeed * Time.deltaTime;
 
-        pitch += lookVector.y * rotationSpeed * Time.deltaTime;
-        pitch = Mathf.Clamp(pitch, bottomClamp, topClamp);
+        _pitch += lookVector.y * _rotationSpeed * Time.deltaTime;
+        _pitch = Mathf.Clamp(_pitch, _bottomClamp, _topClamp);
 
+        float targetSpeed = _sprintAction != null && _sprintAction.IsPressed() ? 1f : 0.5f;
+        float vx = _movementVector.x * targetSpeed;
+        float vz = _movementVector.y * targetSpeed;
+
+        _animator.SetFloat(VelocityXHash, vx, _dampTime, Time.deltaTime);
+        _animator.SetFloat(VelocityZHash, vz, _dampTime, Time.deltaTime);
     }
 
     private void FixedUpdate()
     {
-        this.Move(movementVector);
-        this.Look();
+        Move(_movementVector);
     }
 
-    private void Move(Vector2 movementVector)
+    private void LateUpdate()
     {
-        Vector3 move = (transform.forward * movementVector.y + transform.right * movementVector.x) * speed;
-        characterController.SimpleMove(move);
+        Look();
+    }
+
+    private void Move(Vector2 input)
+    {
+        float speed = _sprintAction != null && _sprintAction.IsPressed() ? _runSpeed : _walkSpeed;
+        Vector3 move = (transform.forward * input.y + transform.right * input.x) * speed;
+        _characterController.SimpleMove(move);
     }
 
     private void Look()
     {
-        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
-        followTarget.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
+        Vector3 currentRecoil = _playerFireController != null ? _playerFireController.GetCurrentRecoil() : Vector3.zero;
+        _playerCamera.transform.localRotation = Quaternion.Euler(_pitch + currentRecoil.x, currentRecoil.y, 0f);
 
-        Vector3 aimPoint = playerCamera.position + playerCamera.forward * lookRange;
+        Vector3 aimPoint = _playerCamera.position + _playerCamera.forward * _lookRange;
 
-        if (Physics.Raycast(playerCamera.position, playerCamera.forward, out RaycastHit hit, lookRange))
+        if (Physics.Raycast(_playerCamera.position, _playerCamera.forward, out RaycastHit hit, _lookRange))
         {
             aimPoint = hit.point;
+            if (hit.distance < _minAimDistance)
+            {
+                aimPoint = _playerCamera.position + _playerCamera.forward * _minAimDistance;
+            }
         }
-        weaponTarget.transform.rotation = Quaternion.LookRotation((aimPoint - weaponTarget.position).normalized);
+        _aimTarget.position = aimPoint;
+        _weaponTarget.transform.rotation = Quaternion.LookRotation((aimPoint - _weaponTarget.position).normalized);
     }
 
     private void OnApplicationFocus(bool focus)
@@ -89,6 +139,7 @@ public class PlayerMoveController : MonoBehaviour, IService
         Cursor.lockState = focus ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !focus;
     }
+
     public void OnGamePaused(bool isGamePaused)
     {
         if (isGamePaused)
@@ -103,6 +154,11 @@ public class PlayerMoveController : MonoBehaviour, IService
         }
     }
 
+    public void OnPlayerDeath()
+    {
+        enabled = false;
+    }
+
     public Transform GetPlayer()
     {
         return transform;
@@ -110,6 +166,20 @@ public class PlayerMoveController : MonoBehaviour, IService
 
     public Transform GetPlayerCamera()
     {
-        return playerCamera;
+        return _playerCamera;
+    }
+
+    public SaveData GetSaveData(SaveData data)
+    {
+        data.playerPosition = transform.position;
+        return data;
+    }
+
+    public void SetSaveData(SaveData data)
+    {
+        _characterController.enabled = false;
+        transform.position = data.playerPosition;
+        _characterController.enabled = true;
+        Debug.Log($"SetSaveData called on {gameObject.name}");
     }
 }

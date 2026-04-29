@@ -25,7 +25,7 @@ public class MeleeAttackStrategy : IStrategy
         if (_ConditionChecker())
         {
             _navMeshAgent.autoBraking = false;
-            _enemy.meleeAttack(_target());
+            //_enemy.meleeAttack(_target());
             return Node.Status.Running;
         }
         else

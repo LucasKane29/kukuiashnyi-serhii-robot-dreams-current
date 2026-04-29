@@ -11,6 +11,9 @@ public class ServiceInstaller : MonoBehaviour
     [SerializeField] PlayerFireController _playerFireController;
     [SerializeField] InventoryManager _inventoryManager;
     [SerializeField] MerchantController _merchantController;
+    [SerializeField] LocalizationManager _localizationManager;
+    [SerializeField] SaveSystemManager _saveSystemManager;
+    [SerializeField] AudioManager _audioManager;
     private readonly LogService _logService = new();
 
     private void Awake()
@@ -24,6 +27,9 @@ public class ServiceInstaller : MonoBehaviour
         IServiceLocator.Instance.TryRegisterService<PlayerFireController>(_playerFireController);
         IServiceLocator.Instance.TryRegisterService<InventoryManager>(_inventoryManager);
         IServiceLocator.Instance.TryRegisterService<MerchantController>(_merchantController);
+        IServiceLocator.Instance.TryRegisterService<LocalizationManager>(_localizationManager);
+        IServiceLocator.Instance.TryRegisterService<SaveSystemManager>(_saveSystemManager);
+        IServiceLocator.Instance.TryRegisterService<AudioManager>(_audioManager);
     }
 
     // Update is called once per frame
@@ -38,5 +44,8 @@ public class ServiceInstaller : MonoBehaviour
         IServiceLocator.Instance.TryUnregisterService<PlayerFireController>(_playerFireController);
         IServiceLocator.Instance.TryUnregisterService<InventoryManager>(_inventoryManager);
         IServiceLocator.Instance.TryUnregisterService<MerchantController>(_merchantController);
+        IServiceLocator.Instance.TryUnregisterService<LocalizationManager>(_localizationManager);
+        IServiceLocator.Instance.TryUnregisterService<SaveSystemManager>(_saveSystemManager);
+        IServiceLocator.Instance.TryUnregisterService<AudioManager>(_audioManager);
     }
 }

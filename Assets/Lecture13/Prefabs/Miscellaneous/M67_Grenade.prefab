@@ -237,11 +237,9 @@ MonoBehaviour:
   explosionRadius: 5
   explosionForce: 1000
   fuseTime: 3
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
   explosionEffect: {fileID: 2889429619957910148, guid: 5d1f7b1e00e78844bbdccc0b4a9df3ab,
     type: 3}
+  _explosionSoundName: grenade_explosion
 --- !u!1 &5108746128517861739
 GameObject:
   m_ObjectHideFlags: 0

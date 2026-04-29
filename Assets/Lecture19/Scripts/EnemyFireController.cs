@@ -14,16 +14,17 @@ public class EnemyFireController : MonoBehaviour
 
     private int currentWeaponIndex = 0;
     private Weapon currentWeapon;
+    private Dictionary<Weapon, (Vector3 pos, Quaternion rot)> _originalTransforms = new();
+    private AudioManager _audioManager;
 
-    void Start()
+    private void Awake()
     {
-        if (weapons.Length > 0)
-            takeWeapon(weapons[currentWeaponIndex]);
-    }
-
-    void Update()
-    {
-        
+        foreach (var weapon in weapons)
+        {
+            if (weapon != null)
+                _originalTransforms[weapon] = (weapon.transform.localPosition, weapon.transform.localRotation);
+        }
+        _audioManager = IServiceLocator.Instance.GetService<AudioManager>();
     }
 
     public void SwitchWeapon(string weaponClassName)
@@ -48,19 +49,24 @@ public class EnemyFireController : MonoBehaviour
     private void takeWeapon(Weapon weapon)
     {
         if (currentWeapon != null)
-        {
             currentWeapon.gameObject.SetActive(false);
+
+        if (_originalTransforms.TryGetValue(weapon, out var original))
+        {
+            weapon.transform.localPosition = original.pos;
+            weapon.transform.localRotation = original.rot;
         }
+
         weapon.gameObject.SetActive(true);
         currentWeapon = weapon;
-
     }
 
     public void FireIntoTarget(Vector3 targetPosition)
     {
         if (currentWeapon == null)
             return;
-        currentWeapon?.Fire();
+        targetPosition.y += 0.75f; // Aim at the upper body
+        currentWeapon?.Fire(targetPosition);
     }
 
     public void HideWeapons()
@@ -69,5 +75,13 @@ public class EnemyFireController : MonoBehaviour
         {
             weapon.gameObject.SetActive(false);
         }
+        currentWeapon = null;
+    }
+
+    public Transform GetCurrentWeaponGrip()
+    {
+        if (currentWeapon == null) return null;
+
+        return currentWeapon.GetWeaponGrip();
     }
 }

@@ -1,0 +1,132 @@
+{
+  "entries": [
+    {
+      "key": "MainMenu",
+      "value": "Main Menu"
+    },
+    {
+      "key": "HeadshotsText",
+      "value": "Headshots: {0}"
+    },
+    {
+      "key": "ScoreText",
+      "value": "Score: {0}"
+    },
+    {
+      "key": "ShotsText",
+      "value": "Shots: {0}"
+    },
+    {
+      "key": "ExitButtonText",
+      "value": "Exit"
+    },
+    {
+      "key": "LobbyButtonText",
+      "value": "Lobby"
+    },
+    {
+      "key": "MerchantText",
+      "value": "Merchant"
+    },
+    {
+      "key": "YouWinText",
+      "value": "You win!"
+    },
+    {
+      "key": "YouLoseText",
+      "value": "You lose!"
+    },
+    {
+      "key": "ReturnButtonText",
+      "value": "Return"
+    },
+    {
+      "key": "WinText",
+      "value": "Get {0} score to win!"
+    },
+    {
+      "key": "FirstAidKit",
+      "value": "First Aid Kit"
+    },
+    {
+      "key": "SellButtonText",
+      "value": "Sell"
+    },
+    {
+      "key": "BuyButtonText",
+      "value": "Buy"
+    },
+    {
+      "key": "MenuTitleText",
+      "value": "Menu"
+    },
+    {
+      "key": "GameTitleText",
+      "value": "Dummy Game"
+    },
+    {
+      "key": "StartButtonText",
+      "value": "Start"
+    },
+    {
+      "key": "LanguageLabelText",
+      "value": "Language:"
+    },
+    {
+      "key": "SettingsTitleText",
+      "value": "Settings"
+    },
+    {
+      "key": "SettingsButtonText",
+      "value": "Settings"
+    },
+    {
+      "key": "EnglishLabel",
+      "value": "English"
+    },
+    {
+      "key": "UkrainianLabel",
+      "value": "Ukrainian"
+    },
+    {
+      "key": "NotEnoughCoins",
+      "value": "Not enough coins! Need {0}."
+    },
+    {
+      "key": "InventoryFull",
+      "value": "Inventory is full!"
+    },
+    {
+      "key": "BoughtItem",
+      "value": "Bought {0} for {1} coins."
+    },
+    {
+      "key": "NoItemToSell",
+      "value": "No {0} to sell!"
+    },
+    {
+      "key": "SoldItem",
+      "value": "Sold {0} for {1} coins."
+    },
+    {
+      "key": "LoadButtonText",
+      "value": "Load"
+    },
+    {
+      "key": "SaveButtonText",
+      "value": "Save"
+    },
+    {
+      "key": "MainVolumeText",
+      "value": "All sounds:"
+    },
+    {
+      "key": "MusicVolumeText",
+      "value": "Music:"
+    },
+    {
+      "key": "SfxVolumeText",
+      "value": "SFX:"
+    }
+  ]
+}

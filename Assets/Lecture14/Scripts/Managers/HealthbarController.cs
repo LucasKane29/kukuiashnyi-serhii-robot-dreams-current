@@ -54,6 +54,16 @@ public class HealthbarController : MonoBehaviour
         }
         healthbarLevel.sizeDelta = new Vector2(maxHealthBarWidth, healthbarLevel.sizeDelta.y);
     }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
 }
 
 

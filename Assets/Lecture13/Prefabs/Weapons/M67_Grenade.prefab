@@ -32,6 +32,37 @@ Transform:
   - {fileID: 6284841615846623220}
   m_Father: {fileID: 2108930790777451963}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &515411054544393986
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3814796797078200298}
+  m_Layer: 0
+  m_Name: WeaponGrip
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3814796797078200298
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515411054544393986}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.46, y: 0.46, z: 0.95}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2108930790777451963}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4032648406920354925
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,6 +264,7 @@ Transform:
   m_Children:
   - {fileID: 233146697767301942}
   - {fileID: 887354470775057381}
+  - {fileID: 3814796797078200298}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4167269200572783730
@@ -251,18 +283,18 @@ MonoBehaviour:
   fireRate: 1
   maxAmmo: 99
   reloadTime: 1
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _recoilX: 2
+  _recoilY: 0.5
+  _isPlayerWeapon: 0
+  _weaponGrip: {fileID: 3814796797078200298}
+  _soundId: grenade_explosion
   grenadePrefab: {fileID: 153257990480286533, guid: be01521d1a910a94ebfed138fd7a21f8,
     type: 3}
   startPosition: {fileID: 2108930790777451963}
   launchForce: 10
-  explosionRadius: 10
-  explosionForce: 1000
-  fuseTime: 3
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  explosionEffect: {fileID: 2889429619957910148, guid: 5d1f7b1e00e78844bbdccc0b4a9df3ab,
-    type: 3}
 --- !u!1 &7243263233906897307
 GameObject:
   m_ObjectHideFlags: 0

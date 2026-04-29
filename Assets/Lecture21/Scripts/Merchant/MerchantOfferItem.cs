@@ -12,21 +12,22 @@ public class MerchantOfferItem : MonoBehaviour
 
     private MerchantItems _offer;
     private MerchantController _merchant;
+    private LocalizationManager _localizationManager;
     private bool _isBuy;
 
-    public void Setup(MerchantItems offer, bool isBuy, MerchantController merchant)
+    public void Setup(MerchantItems offer, bool isBuy, MerchantController merchant, LocalizationManager localizationManager)
     {
         _offer = offer;
         _isBuy = isBuy;
         _merchant = merchant;
-
+        _localizationManager = localizationManager;
         _itemIcon.sprite = offer.itemData.Icon;
-        _itemName.text = offer.itemData.DisplayName;
+        _itemName.text = _localizationManager.GetLocalizedValue(offer.itemData.DisplayName);
         _price.text = $"{offer.price} c.";
 
         _actionButton.onClick.RemoveAllListeners();
         _actionButton.onClick.AddListener(OnActionClicked);
-        _buttonText.text = isBuy ? "Buy" : "Sell";
+        _buttonText.text = isBuy ? _localizationManager.GetLocalizedValue("BuyButtonText") : _localizationManager.GetLocalizedValue("SellButtonText");
     }
 
     private void OnActionClicked()

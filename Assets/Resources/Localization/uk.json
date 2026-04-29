@@ -1,0 +1,132 @@
+{
+  "entries": [
+    {
+      "key": "HeadshotsText",
+      "value": "Хедшоти: {0}"
+    },
+    {
+      "key": "MainMenu",
+      "value": "Головне меню"
+    },
+    {
+      "key": "ScoreText",
+      "value": "Рахунок: {0}"
+    },
+    {
+      "key": "ShotsText",
+      "value": "Постріли: {0}"
+    },
+    {
+      "key": "ExitButtonText",
+      "value": "Вихід"
+    },
+    {
+      "key": "LobbyButtonText",
+      "value": "Лоббі"
+    },
+    {
+      "key": "MerchantText",
+      "value": "Торгівельник"
+    },
+    {
+      "key": "YouWinText",
+      "value": "Ви виграли!"
+    },
+    {
+      "key": "YouLoseText",
+      "value": "Ви програли!"
+    },
+    {
+      "key": "ReturnButtonText",
+      "value": "Повернутись"
+    },
+    {
+      "key": "WinText",
+      "value": "Здобудь {0} очків для виграшу!"
+    },
+    {
+      "key": "FirstAidKit",
+      "value": "Аптечка"
+    },
+    {
+      "key": "SellButtonText",
+      "value": "Продати"
+    },
+    {
+      "key": "BuyButtonText",
+      "value": "Придбати"
+    },
+    {
+      "key": "MenuTitleText",
+      "value": "Меню"
+    },
+    {
+      "key": "GameTitleText",
+      "value": "Гра болванчика"
+    },
+    {
+      "key": "StartButtonText",
+      "value": "Старт"
+    },
+    {
+      "key": "LanguageLabelText",
+      "value": "Мова:"
+    },
+    {
+      "key": "SettingsTitleText",
+      "value": "Налаштування"
+    },
+    {
+      "key": "SettingsButtonText",
+      "value": "Налаштування"
+    },
+    {
+      "key": "EnglishLabel",
+      "value": "Англійська"
+    },
+    {
+      "key": "UkrainianLabel",
+      "value": "Українська"
+    },
+    {
+      "key": "NotEnoughCoins",
+      "value": "Не достатньо монет! Потрібно {0}."
+    },
+    {
+      "key": "InventoryFull",
+      "value": "Інвентар переповнено!"
+    },
+    {
+      "key": "BoughtItem",
+      "value": "Придбано {0} за {1} монет."
+    },
+    {
+      "key": "NoItemToSell",
+      "value": "Немає {0} для продажу!"
+    },
+    {
+      "key": "SoldItem",
+      "value": "Продано {0} за {1} монет."
+    },
+    {
+      "key": "LoadButtonText",
+      "value": "Завантажити"
+    },
+    {
+      "key": "SaveButtonText",
+      "value": "Зберегти"
+    },
+    {
+      "key": "MainVolumeText",
+      "value": "Всі звуки:"
+    },
+    {
+      "key": "MusicVolumeText",
+      "value": "Музика:"
+    },
+    {
+      "key": "SfxVolumeText",
+      "value": "Оточення:"
+    }
+  ]
+}

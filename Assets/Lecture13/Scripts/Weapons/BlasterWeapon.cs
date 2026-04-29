@@ -11,7 +11,6 @@ public class BlasterWeapon : Weapon
     [SerializeField] private float hitForce;
     [SerializeField] private GameObject flashEffect;
     private float flashLiveTime = 0.5f;
-    private Quaternion _originalMuzzleRotation;
 
     public override void Fire(Vector3? targetDirection = null)
     {
@@ -21,6 +20,7 @@ public class BlasterWeapon : Weapon
         nextFireTime = Time.time + (1f / fireRate);
         SpawnLaserBolt(targetDirection);
         MadeShot();
+        PlayFireSound();
     }
 
     private void SpawnLaserBolt(Vector3? targetDirection = null)
@@ -28,16 +28,18 @@ public class BlasterWeapon : Weapon
         if (laserBoltPrefab == null)
             return;
 
-        if(targetDirection != null)
+        Quaternion spawnRotation;
+        if (targetDirection != null)
         {
-            _originalMuzzleRotation = Quaternion.LookRotation(targetDirection.Value - muzzlePosition.position).normalized;
+            Vector3 dir = (targetDirection.Value - muzzlePosition.position).normalized;
+            spawnRotation = Quaternion.LookRotation(dir);
         }
         else
         {
-            _originalMuzzleRotation = muzzlePosition.rotation;
+            spawnRotation = muzzlePosition.rotation;
         }
 
-        LaserBolt bolt = Instantiate(laserBoltPrefab, muzzlePosition.position, muzzlePosition.rotation);
+        LaserBolt bolt = Instantiate(laserBoltPrefab, muzzlePosition.position, spawnRotation);
         bolt.Initialize(range, targetLayer, damage, hitForce, muzzlePosition.position, targetDirection);
 
         if (flashEffect != null)
@@ -58,5 +60,10 @@ public class BlasterWeapon : Weapon
     public override void Reload()
     {
         return;
+    }
+
+    public Vector3 GetMuzzlePosition()
+    {
+        return muzzlePosition.position;
     }
 }

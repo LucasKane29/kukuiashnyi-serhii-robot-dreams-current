@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Human : Enemy
 {
+    private readonly int _takeDamageHash = Animator.StringToHash("IsTakingDamage");
+    /*
     public override void runDieAnimation()
     {
         //throw new System.NotImplementedException();
@@ -11,6 +13,7 @@ public class Human : Enemy
 
     public override void runTakeDamageAnimation()
     {
-        //throw new System.NotImplementedException();
+        _animator.SetTrigger(_takeDamageHash);
     }
+    */
 }

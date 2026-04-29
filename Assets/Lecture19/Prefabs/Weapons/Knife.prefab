@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3841097288874749755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7997049857010160295}
+  m_Layer: 0
+  m_Name: WeaponGrip
+  m_TagString: Untagged
+  m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7997049857010160295
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3841097288874749755}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.92424953, y: -0.22032483, z: -0.020365102, w: -0.31113517}
+  m_LocalPosition: {x: 0.059, y: -0.003, z: -0.004}
+  m_LocalScale: {x: 1.4652002, y: 1.4651988, z: 1.4651984}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2763726639723664677}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2436451526269350606
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -85,13 +116,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4930bb94ca493894399d7d0018b5d440,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7997049857010160295}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4930bb94ca493894399d7d0018b5d440,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 97969539733170720}
   m_SourcePrefab: {fileID: 100100000, guid: 4930bb94ca493894399d7d0018b5d440, type: 3}
+--- !u!4 &2763726639723664677 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4930bb94ca493894399d7d0018b5d440,
+    type: 3}
+  m_PrefabInstance: {fileID: 2436451526269350606}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3247493427351457695 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 4930bb94ca493894399d7d0018b5d440,
@@ -110,12 +151,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db00bfb93fc0e3a4fb39512c3e50a641, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 5
+  damage: 25
   fireRate: 1
   maxAmmo: 10
   reloadTime: 2
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
+  _recoilX: 2
+  _recoilY: 0.5
   _isPlayerWeapon: 0
+  _weaponGrip: {fileID: 0}
+  _soundId: 
   radius: 1

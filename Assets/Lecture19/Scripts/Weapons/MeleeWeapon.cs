@@ -16,6 +16,7 @@ public class MeleeWeapon : Weapon
             if (collider.TryGetComponent(out IDamageable damageable))
                 damageable.TakeDamage(damage, collider.transform.position, this.transform.position);
         }
+        PlayFireSound();
     }
 
     public override void Reload()

@@ -1,0 +1,4 @@
+enum LocalizationCodes
+{
+    Ukrainian,
+}

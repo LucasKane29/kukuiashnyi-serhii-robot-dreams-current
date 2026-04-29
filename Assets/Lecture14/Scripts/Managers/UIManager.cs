@@ -32,13 +32,14 @@ public class UIManager : MonoBehaviour, IService
     [SerializeField]
     private InventoryItem _itemPrefub;
 
-    private float _initialValue = 0f;
-
     private float _maxHealthBarWidth;
 
     private Coroutine _currentAnimation;
 
     private GameManager _gameManager;
+
+    private LocalizationManager _localizationManager;
+    private ScoreManager _scoreManager;
 
     private List<InventoryItem> _itemsUI = new List<InventoryItem>();
 
@@ -58,33 +59,32 @@ public class UIManager : MonoBehaviour, IService
     {
         _maxHealthBarWidth = _playerHealthbarLevel.sizeDelta.x;
         _gameManager = IServiceLocator.Instance?.GetService<GameManager>();
+        _localizationManager = IServiceLocator.Instance?.GetService<LocalizationManager>();
+        _localizationManager.OnLanguageChanged += UpdateStatisticLocalization;
+        _scoreManager = IServiceLocator.Instance?.GetService<ScoreManager>();
     }
 
     void Start()
     {
-        _scoreText.text = $"Score: {_initialValue}";
-        _headshotsText.text = $"Headshots: {_initialValue}";
-        _shotsText.text = $"Shots: {_initialValue}";
-        if (_gameManager != null)
-            _winScoreText.text = $"Get {_gameManager.GetWinScore()} score to win!";
+        UpdateStatisticLocalization();
     }
 
     public void UpdateScore(float currentScore)
     {
         if (_scoreText != null)
-            _scoreText.text = $"Score: {currentScore}";
+            _scoreText.text = _localizationManager.GetLocalizedValue("ScoreText", currentScore);
     }
 
     public void UpdateShots(int currentShots)
     {
         if (_shotsText != null)
-            _shotsText.text = $"Shots: {currentShots}";
+            _shotsText.text = _localizationManager.GetLocalizedValue("ShotsText", currentShots);
     }
 
     public void UpdateHeadshots(int currentHeadshots)
     {
         if (_headshotsText != null)
-            _headshotsText.text = $"Headshots: {currentHeadshots}";
+            _headshotsText.text = _localizationManager.GetLocalizedValue("HeadshotsText", currentHeadshots);
     }
 
     public void ShowMainMenu()
@@ -96,7 +96,17 @@ public class UIManager : MonoBehaviour, IService
     public void HideMainMenu()
     {
         if (_mainMenu != null)
+        {
             _mainMenu.HideMainMenu();
+        }   
+    }
+
+    public void HideSettingsMenu()
+    {
+        if (_mainMenu != null)
+        {
+            _mainMenu.HideSettingsMenu();
+        }
     }
 
     public void UpdatePlayerHealthBar(float current, float max)
@@ -168,5 +178,23 @@ public class UIManager : MonoBehaviour, IService
                 _itemsUI.Add(newItemUI);
             }
         }
+    }
+
+    void OnDestroy()
+    {
+        if (_localizationManager != null)
+            _localizationManager.OnLanguageChanged -= Start;
+    }
+
+    void UpdateStatisticLocalization()
+    {
+        if (_scoreText != null)
+            _scoreText.text = _localizationManager.GetLocalizedValue("ScoreText", _scoreManager._score);
+        if (_headshotsText != null)
+            _headshotsText.text = _localizationManager.GetLocalizedValue("HeadshotsText", _scoreManager._headshots);
+        if (_shotsText != null)
+            _shotsText.text = _localizationManager.GetLocalizedValue("ShotsText", _scoreManager._shots);
+        if (_gameManager != null && _winScoreText != null)
+            _winScoreText.text = _localizationManager.GetLocalizedValue("WinText", _gameManager.GetWinScore());
     }
 }

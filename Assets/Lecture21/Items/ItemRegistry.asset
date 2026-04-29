@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ItemRegistry
   m_EditorClassIdentifier: 
   Items:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: c75e2e8520e3dcb40948b16f79c232ff, type: 2}
+  - {fileID: 11400000, guid: 7d301a842801e564d90d65a5d25e12cd, type: 2}

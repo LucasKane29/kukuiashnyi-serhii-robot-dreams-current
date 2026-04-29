@@ -31,7 +31,7 @@ public class RangeAttackStrategy : IStrategy
 
         if (_ConditionChecker())
         {
-            _enemy.rangeAttack(_target());
+            //_enemy.rangeAttack(_target());
 
             return Node.Status.Running;
         }

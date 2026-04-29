@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +13,16 @@ public class PlayerFireController : MonoBehaviour, IService
     private string attackActionName = "Attack", reloadActionName = "Reload", switchWeaponActionName = "SwitchWeapon";
     [SerializeField] private Transform weaponSpawnPoint;
     private Transform _playerCamera;
+    private AudioManager _audioManager;
+    [SerializeField]
+    private float _recoilRecoverySpeed = 5f;
+    [SerializeField]
+    private float _snapSpeed = 20f;
+    [SerializeField] private Animator _animator;
+    private static readonly int IsArmedHash = Animator.StringToHash("IsArmed");
+    private static readonly int IsShootingHash = Animator.StringToHash("IsShooting");
+    [SerializeField] private IKHandController _ikHandController;
+    [SerializeField] private EventBus _eventBus;
 
 
     private int currentWeaponIndex = 0;
@@ -20,10 +31,7 @@ public class PlayerFireController : MonoBehaviour, IService
     private InputAction reloadAction;
     private InputAction switchWeaponAction;
     private bool scrollUsed;
-    [SerializeField]
-    private float _recoilRecoverySpeed = 5f;
-    [SerializeField]
-    private float _snapSpeed = 20f; 
+
 
     private Vector3 _currentRecoil; 
     private Vector3 _targetRecoil;
@@ -31,14 +39,20 @@ public class PlayerFireController : MonoBehaviour, IService
     void Awake()
     {
         _playerCamera = IServiceLocator.Instance.GetService<PlayerMoveController>()?.GetPlayerCamera();
+        _audioManager = IServiceLocator.Instance.GetService<AudioManager>();
     }
 
-    void Start()
+    private IEnumerator Start()
     {
         attackAction = InputSystem.actions.FindAction(attackActionName);
         reloadAction = InputSystem.actions.FindAction(reloadActionName);
         switchWeaponAction = InputSystem.actions.FindAction(switchWeaponActionName);
 
+        attackAction.Enable();
+        reloadAction.Enable();
+        switchWeaponAction.Enable();
+
+        yield return null;
         if (weapons.Length > 0)
             takeWeapon(weapons[currentWeaponIndex]);
     }
@@ -46,8 +60,12 @@ public class PlayerFireController : MonoBehaviour, IService
     void Update()
     {
         if (attackAction.WasPressedThisFrame())
+        {
             currentWeapon?.Fire();
-
+            _animator.SetTrigger(IsShootingHash);
+            _eventBus.Publish(new PlayerShotEvent(transform.position));
+        }
+            
         if (reloadAction.WasPressedThisFrame())
             currentWeapon?.Reload();
 
@@ -63,7 +81,6 @@ public class PlayerFireController : MonoBehaviour, IService
 
         _targetRecoil = Vector3.Lerp(_targetRecoil, Vector3.zero, _recoilRecoverySpeed * Time.deltaTime);
         _currentRecoil = Vector3.Lerp(_currentRecoil, _targetRecoil, _snapSpeed * Time.deltaTime);
-        _playerCamera.localRotation = Quaternion.Euler(_currentRecoil);
     }
 
     private void SwitchWeapon(int direction)
@@ -82,6 +99,18 @@ public class PlayerFireController : MonoBehaviour, IService
         GameObject spawnedWeapon = Instantiate(weapon.gameObject, weaponSpawnPoint, false);
 
         currentWeapon = spawnedWeapon.GetComponent<Weapon>();
+        if (currentWeapon != null)
+        {
+            if(currentWeapon.GetWeaponGrip() != null)
+            {
+                _ikHandController.SetWeaponGrip(currentWeapon.GetWeaponGrip());
+                _ikHandController.SetIKActive(true);
+                _animator.SetBool(IsArmedHash, true);
+                return;
+            }
+        }
+        _animator.SetBool(IsArmedHash, false);
+        _ikHandController.SetIKActive(false);
     }
 
     public void OnGamePaused(bool isGamePaused)
@@ -108,5 +137,18 @@ public class PlayerFireController : MonoBehaviour, IService
     public void EquipWeapon(WeaponItemData weaponItemData)
     {
         return;
+    }
+
+    public void UnArm()
+    {
+        if (currentWeapon != null)
+            Destroy(currentWeapon.gameObject);
+        weapons = null;
+        currentWeapon = null;
+    }
+
+    public Vector3 GetCurrentRecoil()
+    {
+        return _currentRecoil;
     }
 }

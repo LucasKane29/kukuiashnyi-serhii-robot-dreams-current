@@ -10,6 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 304013864322901829, guid: eadb6cf5834cfa8458898d393cd0d2b5,
         type: 3}
+      propertyPath: _soundId
+      value: enemy_bluster_shot
+      objectReference: {fileID: 0}
+    - target: {fileID: 304013864322901829, guid: eadb6cf5834cfa8458898d393cd0d2b5,
+        type: 3}
       propertyPath: _isCountShots
       value: 0
       objectReference: {fileID: 0}

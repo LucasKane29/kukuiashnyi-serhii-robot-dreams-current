@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FirstAidKit
   m_EditorClassIdentifier: Assembly-CSharp::FirstAidKitItemData
   Id: 2
-  DisplayName: First Aid Kit
+  DisplayName: FirstAidKit
   Icon: {fileID: 21300000, guid: 8c44c58f45392b14dba4a3d417822056, type: 3}
   Type: 1
   MaxStackSize: 10

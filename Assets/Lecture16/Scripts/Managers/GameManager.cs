@@ -1,8 +1,11 @@
 
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using System.Collections;
 
 public enum GameState
 {
@@ -33,6 +36,7 @@ public class GameManager : MonoBehaviour, IService
     private PlayerMoveController _playerMoveController;
     private PlayerFireController _playerFireController;
     private MerchantController _merchantController;
+    private AudioManager _audioManager;
 
     [SerializeField]
     private string _lobbySceneName;
@@ -50,6 +54,7 @@ public class GameManager : MonoBehaviour, IService
             _playerMoveController = IServiceLocator.Instance.GetService<PlayerMoveController>();
             _playerFireController = IServiceLocator.Instance.GetService<PlayerFireController>();
             _merchantController = IServiceLocator.Instance.GetService<MerchantController>();
+            _audioManager = IServiceLocator.Instance.GetService<AudioManager>();
         }
     }
 
@@ -108,14 +113,17 @@ public class GameManager : MonoBehaviour, IService
         {
             case GameState.Playing:
                 Time.timeScale = 1f;
+                _uiManager.HideSettingsMenu();
                 _playerFireController.OnGamePaused(false);
                 _playerMoveController.OnGamePaused(false);
+                _audioManager.ResumeAll();
                 break;
             case GameState.Paused:
                 Time.timeScale = 0f;
                 _uiManager.ShowMainMenu();
                 _playerFireController.OnGamePaused(true);
                 _playerMoveController.OnGamePaused(true);
+                _audioManager.PauseAll();
                 break;
             case GameState.Inventory:
                 Time.timeScale = 0f;
@@ -193,5 +201,11 @@ public class GameManager : MonoBehaviour, IService
     public void SetCanInteract(bool canInteract)
     {
         _isCanInteract = canInteract;
+    }
+
+    public void ReloadScene()
+    {                                                                                                                                                                                                                               //    бо після LoadScene GetActiveScene() може повернути вже нову сцену
+        string sceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadSceneAsync(sceneName);
     }
 }

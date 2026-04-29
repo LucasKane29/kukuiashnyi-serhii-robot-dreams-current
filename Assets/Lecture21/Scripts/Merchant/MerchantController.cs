@@ -32,6 +32,7 @@ public class MerchantController : MonoBehaviour, IService
 
     private InventoryManager _inventoryManager;
     private GameManager _gameManager;
+    private LocalizationManager _localizationManager;
 
     public IReadOnlyList<MerchantItems> ItemsForSale => _itemsForSale;
     public IReadOnlyList<MerchantItems> ItemsToBuy => _itemsToBuy;
@@ -43,6 +44,7 @@ public class MerchantController : MonoBehaviour, IService
     {
         _inventoryManager = IServiceLocator.Instance.GetService<InventoryManager>();
         _gameManager = IServiceLocator.Instance.GetService<GameManager>();
+        _localizationManager = IServiceLocator.Instance.GetService<LocalizationManager>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -79,7 +81,7 @@ public class MerchantController : MonoBehaviour, IService
     {
         if (_inventoryManager.GetItemQuantity(_coinData) < offer.price)
         {
-            _merchantUI.ShowMessage($"Not enough coins! Need {offer.price}.");
+            _merchantUI.ShowMessage(_localizationManager.GetLocalizedValue("NotEnoughCoins", offer.price));
             return false;
         }
 
@@ -90,10 +92,10 @@ public class MerchantController : MonoBehaviour, IService
         if (!added)
         {
             _inventoryManager.AddItem(_coinData, offer.price);
-            _merchantUI.ShowMessage("Inventory full!");
+            _merchantUI.ShowMessage(_localizationManager.GetLocalizedValue("InventoryFull"));
             return false;
         }
-        _merchantUI.ShowMessage($"Bought {offer.itemData.DisplayName} for {offer.price} coins.");
+        _merchantUI.ShowMessage(_localizationManager.GetLocalizedValue("BoughtItem", _localizationManager.GetLocalizedValue(offer.itemData.DisplayName), offer.price));
         return true;
     }
 
@@ -101,7 +103,7 @@ public class MerchantController : MonoBehaviour, IService
     {
         if (_inventoryManager.GetItemQuantity(offer.itemData) < 1)
         {
-            _merchantUI.ShowMessage($"No {offer.itemData.DisplayName} to sell!");
+            _merchantUI.ShowMessage(_localizationManager.GetLocalizedValue("NoItemToSell", _localizationManager.GetLocalizedValue(offer.itemData.DisplayName)));
             return false;
         }
 
@@ -109,7 +111,7 @@ public class MerchantController : MonoBehaviour, IService
         if (!removed) return false;
 
         _inventoryManager.AddItem(_coinData, offer.price);
-        _merchantUI.ShowMessage($"Sold {offer.itemData.DisplayName} for {offer.price} coins.");
+        _merchantUI.ShowMessage(_localizationManager.GetLocalizedValue("SoldItem", _localizationManager.GetLocalizedValue(offer.itemData.DisplayName), offer.price));
         return true;
     }
 

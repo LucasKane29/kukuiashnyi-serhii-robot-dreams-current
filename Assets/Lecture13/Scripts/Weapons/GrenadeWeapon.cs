@@ -20,6 +20,6 @@ public class GrenadeWeapon : Weapon
         grenade.AddForce(startPosition.forward * launchForce, ForceMode.Impulse);
 
         if (grenade.TryGetComponent(out Grenade grenadeScript))
-            grenadeScript.Init(damage, targetLayer, startPosition.position);
+            grenadeScript.Init(damage, targetLayer, startPosition.position, _audioManager);
     }
 }

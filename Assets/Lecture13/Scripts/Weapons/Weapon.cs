@@ -13,8 +13,11 @@ public abstract class Weapon : MonoBehaviour, IWeapon
     [SerializeField] private float _recoilX = 2f;
     [SerializeField] private float _recoilY = 0.5f;
     [SerializeField] protected bool _isPlayerWeapon = false;
+    [SerializeField] protected Transform _weaponGrip;
+    [SerializeField] protected string _soundId;
     private ScoreManager _scoreManager;
     private PlayerFireController _playerFireController;
+    protected AudioManager _audioManager;
 
     protected int currentAmmo;
     protected float nextFireTime;
@@ -36,6 +39,7 @@ public abstract class Weapon : MonoBehaviour, IWeapon
         {
             _playerFireController = IServiceLocator.Instance.GetService<PlayerFireController>();
         }
+        _audioManager = IServiceLocator.Instance.GetService<AudioManager>();
     }
 
     public abstract void Fire(Vector3? targetDirection = null);
@@ -61,5 +65,15 @@ public abstract class Weapon : MonoBehaviour, IWeapon
             _scoreManager.OnShotMade();
             _playerFireController.ApplyRecoil(_recoilX, _recoilY);
         }
+    }
+
+    public Transform GetWeaponGrip()
+    {
+        return _weaponGrip;
+    }
+
+    protected void PlayFireSound()
+    {
+        _audioManager.PlaySoundAtPosition(_soundId, transform.position);
     }
 }

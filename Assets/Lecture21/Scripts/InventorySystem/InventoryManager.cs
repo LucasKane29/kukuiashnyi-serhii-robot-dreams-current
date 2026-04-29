@@ -2,14 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour, IService
+[System.Serializable]
+public class ItemSaveEntry
+{
+    public string itemId;
+    public int amount;
+}
+
+public class InventoryManager : MonoBehaviour, IService, ISaveable
 {
     [SerializeField]
     private EventBus _eventBus;
     [SerializeField]
     private GameObject _player;
+    [SerializeField]
+    private ItemRegistry _itemRegistry;
 
     private Dictionary<ItemData, int> _items = new ();
+
+    private SaveSystemManager _systemManager;
+
+    void Awake()
+    {
+        _systemManager = IServiceLocator.Instance.GetService<SaveSystemManager>();
+        _systemManager.RegisterSaveable(this);
+    }
+
+    void OnDestroy()
+    {
+        if (_systemManager != null)
+        {
+            _systemManager.UnregisterSaveable(this);
+        }
+    }
 
     public bool AddItem(ItemData item, int quantity)
     {
@@ -82,5 +107,34 @@ public class InventoryManager : MonoBehaviour, IService
                 _eventBus.Publish(new UpdateInventoryEvent(_items));
             }
         }
+    }
+
+    public SaveData GetSaveData(SaveData data)
+    {
+        data.items = new List<ItemSaveEntry>();
+        foreach (var kvp in _items)
+        {
+            data.items.Add(new ItemSaveEntry
+            {
+                itemId = kvp.Key.Id,
+                amount = kvp.Value
+            });
+        }
+        return data;
+    }
+
+    public void SetSaveData(SaveData data)
+    {
+        _items = new Dictionary<ItemData, int>();
+        foreach (var itemSaveEntry in data.items)
+        {
+            var itemData = _itemRegistry.GetById(itemSaveEntry.itemId);
+            if (itemData != null)
+            {
+                _items[itemData] = itemSaveEntry.amount;
+            }
+        }
+        _eventBus.Publish(new UpdateInventoryEvent(_items));
+        Debug.Log($"SetSaveData called on {gameObject.name}");
     }
 }

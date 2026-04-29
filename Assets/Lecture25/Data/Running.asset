@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bf42bc1a36d1d04f95ac96263a9cbaf, type: 3}
+  m_Name: Running
+  m_EditorClassIdentifier: 
+  id: Running
+  audioClips:
+  - {fileID: 8300000, guid: cae3403914f364942ae35d6a015ad40a, type: 3}
+  - {fileID: 8300000, guid: 302381d2aabd93c488c43a2abff25a95, type: 3}
+  - {fileID: 8300000, guid: 0493aacf06a725e42a4d87e8761ff789, type: 3}
+  - {fileID: 8300000, guid: 3d4cb0b41a26d85408614cf244b412cb, type: 3}
+  - {fileID: 8300000, guid: b9e7d2f8f5051c740b8421171ba0fae8, type: 3}
+  mixerGroup: {fileID: 226988530614384555, guid: a125c84d7640ef04db39c2ae32860ed7,
+    type: 2}
+  volume: 1
+  pitch: 1
+  pitchVariance: 0.198
+  priority: 256
+  loop: 0
+  is3D: 1
+  minDistance: 1
+  maxDistance: 10
+  rolloffMode: 0
+  spatialBlend: 1
+  dopplerLevel: 0
+  spread: 0
+  customRolloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.006458223
+      value: 1.0195277
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 2.9944344
+      value: 0.7910108
+      inSlope: -0.09020551
+      outSlope: -0.09020551
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 7.971193
+      value: 0.29989958
+      inSlope: -0.054595497
+      outSlope: -0.054595497
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 14.978205
+      value: 0.13633461
+      inSlope: -0.021297354
+      outSlope: -0.021297354
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 19.965023
+      value: 0.044462744
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  useCustomRolloff: 1

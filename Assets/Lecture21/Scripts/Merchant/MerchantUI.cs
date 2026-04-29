@@ -9,8 +9,15 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private MerchantOfferItem _offerRowPrefab;
     [SerializeField] private TextMeshProUGUI _titleText;
     [SerializeField] private TextMeshProUGUI _merchantText;
+    private LocalizationManager _localizationManager;
 
     private List<MerchantOfferItem> _rows = new();
+
+    private void Awake()
+    {
+        _localizationManager = IServiceLocator.Instance.GetService<LocalizationManager>();
+
+    }
 
     public void Show(MerchantController merchant)
     {
@@ -31,14 +38,14 @@ public class MerchantUI : MonoBehaviour
         foreach (var offer in merchant.ItemsForSale)
         {
             var row = Instantiate(_offerRowPrefab, _forSaleContainer);
-            row.Setup(offer, isBuy: true, merchant);
+            row.Setup(offer, isBuy: true, merchant, _localizationManager);
             _rows.Add(row);
         }
 
         foreach (var offer in merchant.ItemsToBuy)
         {
             var row = Instantiate(_offerRowPrefab, _toBuyContainer);
-            row.Setup(offer, isBuy: false, merchant);
+            row.Setup(offer, isBuy: false, merchant, _localizationManager);
             _rows.Add(row);
         }
     }
