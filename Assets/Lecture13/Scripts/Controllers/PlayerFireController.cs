@@ -6,51 +6,35 @@ public class PlayerFireController : MonoBehaviour, IService
 {
     [Header("Fire Settings")]
 
-    [SerializeField] private Transform firePoint;
-
-    [SerializeField] private Weapon[] weapons;
     [SerializeField]
-    private string attackActionName = "Attack", reloadActionName = "Reload", switchWeaponActionName = "SwitchWeapon";
-    [SerializeField] private Transform weaponSpawnPoint;
-    private Transform _playerCamera;
+    private Weapon[] weapons;
+    [SerializeField]
+    private Transform weaponSpawnPoint;
+
+    // TODO: призначити в Inspector → XRI Default Input Actions → XRI RightHand/Trigger
+    [SerializeField]
+    private InputActionReference triggerAction;
+
+    // TODO: призначити в Inspector → XRI Default Input Actions → XRI RightHand/GripPressed (для Reload)
+    [SerializeField]
+    private InputActionReference gripAction;
+
+    [SerializeField]
+    private EventBus _eventBus;
+
     private AudioManager _audioManager;
-    [SerializeField]
-    private float _recoilRecoverySpeed = 5f;
-    [SerializeField]
-    private float _snapSpeed = 20f;
-    [SerializeField] private Animator _animator;
-    private static readonly int IsArmedHash = Animator.StringToHash("IsArmed");
-    private static readonly int IsShootingHash = Animator.StringToHash("IsShooting");
-    [SerializeField] private IKHandController _ikHandController;
-    [SerializeField] private EventBus _eventBus;
-
-
     private int currentWeaponIndex = 0;
     private Weapon currentWeapon;
-    private InputAction attackAction;
-    private InputAction reloadAction;
-    private InputAction switchWeaponAction;
-    private bool scrollUsed;
-
-
-    private Vector3 _currentRecoil; 
-    private Vector3 _targetRecoil;
 
     void Awake()
     {
-        _playerCamera = IServiceLocator.Instance.GetService<PlayerMoveController>()?.GetPlayerCamera();
         _audioManager = IServiceLocator.Instance.GetService<AudioManager>();
     }
 
     private IEnumerator Start()
     {
-        attackAction = InputSystem.actions.FindAction(attackActionName);
-        reloadAction = InputSystem.actions.FindAction(reloadActionName);
-        switchWeaponAction = InputSystem.actions.FindAction(switchWeaponActionName);
-
-        attackAction.Enable();
-        reloadAction.Enable();
-        switchWeaponAction.Enable();
+        triggerAction.action.Enable();
+        gripAction.action.Enable();
 
         yield return null;
         if (weapons.Length > 0)
@@ -59,28 +43,19 @@ public class PlayerFireController : MonoBehaviour, IService
 
     void Update()
     {
-        if (attackAction.WasPressedThisFrame())
+        // TODO: перевірити triggerAction.action.WasPressedThisFrame()
+        //       якщо так — викликати currentWeapon?.Fire() та _eventBus.Publish(new PlayerShotEvent(...))
+
+        if(triggerAction.action.WasPressedThisFrame())
         {
             currentWeapon?.Fire();
-            _animator.SetTrigger(IsShootingHash);
-            _eventBus.Publish(new PlayerShotEvent(transform.position));
+            _eventBus.Publish(new PlayerShotEvent(currentWeapon));
         }
-            
-        if (reloadAction.WasPressedThisFrame())
-            currentWeapon?.Reload();
 
-        int direction = (int)switchWeaponAction.ReadValue<float>();
+        // TODO: перевірити gripAction.action.WasPressedThisFrame()
+        //       якщо так — викликати currentWeapon?.Reload()
 
-        if (direction != 0 && !scrollUsed)
-        {
-            SwitchWeapon(direction > 0 ? 1 : -1);
-            scrollUsed = true;
-        }
-        else if (direction == 0)
-            scrollUsed = false;
-
-        _targetRecoil = Vector3.Lerp(_targetRecoil, Vector3.zero, _recoilRecoverySpeed * Time.deltaTime);
-        _currentRecoil = Vector3.Lerp(_currentRecoil, _targetRecoil, _snapSpeed * Time.deltaTime);
+        // NOTE: SwitchWeapon через scroll прибрано — у VR буде окремий механізм (наступний крок)
     }
 
     private void SwitchWeapon(int direction)
@@ -96,48 +71,30 @@ public class PlayerFireController : MonoBehaviour, IService
     {
         if (currentWeapon != null)
             Destroy(currentWeapon.gameObject);
-        GameObject spawnedWeapon = Instantiate(weapon.gameObject, weaponSpawnPoint, false);
 
+        GameObject spawnedWeapon = Instantiate(weapon.gameObject, weaponSpawnPoint, false);
         currentWeapon = spawnedWeapon.GetComponent<Weapon>();
-        if (currentWeapon != null)
-        {
-            if(currentWeapon.GetWeaponGrip() != null)
-            {
-                _ikHandController.SetWeaponGrip(currentWeapon.GetWeaponGrip());
-                _ikHandController.SetIKActive(true);
-                _animator.SetBool(IsArmedHash, true);
-                return;
-            }
-        }
-        _animator.SetBool(IsArmedHash, false);
-        _ikHandController.SetIKActive(false);
     }
 
     public void OnGamePaused(bool isGamePaused)
     {
-        if (isGamePaused)
-        {
-            attackAction.Disable();
-            reloadAction.Disable();
-            switchWeaponAction.Disable();
+        if(!isGamePaused) {
+            triggerAction.action.Enable();
+            gripAction.action.Enable();
         }
         else
         {
-            attackAction.Enable();
-            reloadAction.Enable();
-            switchWeaponAction.Enable();
-        }
+            triggerAction.action.Disable();
+            gripAction.action.Disable();
+        }   
     }
 
-    public void ApplyRecoil(float recoilX, float recoilY)
+    public void SendHapticImpule(float amplitude, float duration)
     {
-        _targetRecoil += new Vector3(-recoilY, Random.Range(-recoilX, recoilX), 0f);
+
     }
 
-    public void EquipWeapon(WeaponItemData weaponItemData)
-    {
-        return;
-    }
+    public void EquipWeapon(WeaponItemData weaponItemData) { }
 
     public void UnArm()
     {
@@ -147,8 +104,5 @@ public class PlayerFireController : MonoBehaviour, IService
         currentWeapon = null;
     }
 
-    public Vector3 GetCurrentRecoil()
-    {
-        return _currentRecoil;
-    }
+
 }
