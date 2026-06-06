@@ -57,18 +57,28 @@ public class PlayerHealthController : MonoBehaviour, IDamageable, IHealable, ISa
         if (currentHealth <= 0)
         {
             isDead = true;
-            _animator.SetLayerWeight(1, 0f);
             _playerFireController.UnArm();
             _audioManager.PlaySoundAtPosition(_deathSoundId, transform.position);
-            _animator.SetBool(_isArmedHash, false);
-            _rigBuilder.enabled = false;
-            _animator.SetTrigger(_dieHash);
-            _animator.applyRootMotion = true;
-            _ikHandController.SetIKActive(false);
+            if (_rigBuilder != null) _rigBuilder.enabled = false;
+            if (_ikHandController != null) _ikHandController.SetIKActive(false);
+            if (_animator != null)
+            {
+                _animator.SetLayerWeight(1, 0f);
+                _animator.SetBool(_isArmedHash, false);
+                _animator.SetTrigger(_dieHash);
+                _animator.applyRootMotion = true;
+                // OnDeathAnimationFinished() буде викликано Animation Event
+            }
+            else
+            {
+                // У VR немає анімації смерті — викликаємо одразу
+                OnDeathAnimationFinished();
+            }
         }
         else
         {
-            _animator.SetTrigger(_isTakingDamageHash);
+            if (_animator != null)
+                _animator.SetTrigger(_isTakingDamageHash);
         }
     }
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class PlayerFireController : MonoBehaviour, IService
 {
@@ -11,16 +12,17 @@ public class PlayerFireController : MonoBehaviour, IService
     [SerializeField]
     private Transform weaponSpawnPoint;
 
-    // TODO: призначити в Inspector → XRI Default Input Actions → XRI RightHand/Trigger
     [SerializeField]
-    private InputActionReference triggerAction;
+    private InputActionReference triggerAction;  // XRI RightHand/Trigger
 
-    // TODO: призначити в Inspector → XRI Default Input Actions → XRI RightHand/GripPressed (для Reload)
     [SerializeField]
-    private InputActionReference gripAction;
+    private InputActionReference gripAction;     // XRI RightHand/GripPressed (Reload)
 
     [SerializeField]
     private EventBus _eventBus;
+
+    [SerializeField]
+    private ActionBasedController _rightHandController;
 
     private AudioManager _audioManager;
     private int currentWeaponIndex = 0;
@@ -43,19 +45,16 @@ public class PlayerFireController : MonoBehaviour, IService
 
     void Update()
     {
-        // TODO: перевірити triggerAction.action.WasPressedThisFrame()
-        //       якщо так — викликати currentWeapon?.Fire() та _eventBus.Publish(new PlayerShotEvent(...))
-
-        if(triggerAction.action.WasPressedThisFrame())
+        if (triggerAction.action.WasPressedThisFrame())
         {
             currentWeapon?.Fire();
-            _eventBus.Publish(new PlayerShotEvent(currentWeapon));
+            _eventBus.Publish(new PlayerShotEvent(transform.position));
         }
 
-        // TODO: перевірити gripAction.action.WasPressedThisFrame()
-        //       якщо так — викликати currentWeapon?.Reload()
-
-        // NOTE: SwitchWeapon через scroll прибрано — у VR буде окремий механізм (наступний крок)
+        if (gripAction.action.WasPressedThisFrame())
+        {
+            currentWeapon?.Reload();
+        }
     }
 
     private void SwitchWeapon(int direction)
@@ -78,7 +77,8 @@ public class PlayerFireController : MonoBehaviour, IService
 
     public void OnGamePaused(bool isGamePaused)
     {
-        if(!isGamePaused) {
+        if (!isGamePaused)
+        {
             triggerAction.action.Enable();
             gripAction.action.Enable();
         }
@@ -86,12 +86,24 @@ public class PlayerFireController : MonoBehaviour, IService
         {
             triggerAction.action.Disable();
             gripAction.action.Disable();
-        }   
+        }
     }
 
     public void SendHapticImpule(float amplitude, float duration)
     {
+        _rightHandController?.SendHapticImpulse(amplitude, duration);
+    }
 
+    // У VR відмова екрану замінюється haptic-зворотнім зв'язком контролера
+    public void ApplyRecoil(float x, float y)
+    {
+        SendHapticImpule(Mathf.Clamp01(x / 10f), 0.1f);
+    }
+
+    // У VR немає візуального recoil камери — повертаємо нуль
+    public Vector3 GetCurrentRecoil()
+    {
+        return Vector3.zero;
     }
 
     public void EquipWeapon(WeaponItemData weaponItemData) { }
@@ -103,6 +115,4 @@ public class PlayerFireController : MonoBehaviour, IService
         weapons = null;
         currentWeapon = null;
     }
-
-
 }

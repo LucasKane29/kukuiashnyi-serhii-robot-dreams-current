@@ -33,6 +33,8 @@ public class PlayerMoveController : MonoBehaviour, IService, ISaveable
     private float _minAimDistance = 3f;
     [SerializeField]
     private float _dampTime = 0.1f;
+    [SerializeField]
+    private bool _isVRMode = false;
 
     private static readonly int VelocityXHash = Animator.StringToHash("VelocityX");
     private static readonly int VelocityZHash = Animator.StringToHash("VelocityZ");
@@ -75,8 +77,10 @@ public class PlayerMoveController : MonoBehaviour, IService, ISaveable
         _sprintAction = InputSystem.actions.FindAction(_sprintActionName);
 
         transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
-        _playerCamera.transform.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
-        _weaponTarget.transform.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
+        if (_playerCamera != null)
+            _playerCamera.transform.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
+        if (_weaponTarget != null)
+            _weaponTarget.transform.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
     }
 
     void Update()
@@ -93,8 +97,11 @@ public class PlayerMoveController : MonoBehaviour, IService, ISaveable
         float vx = _movementVector.x * targetSpeed;
         float vz = _movementVector.y * targetSpeed;
 
-        _animator.SetFloat(VelocityXHash, vx, _dampTime, Time.deltaTime);
-        _animator.SetFloat(VelocityZHash, vz, _dampTime, Time.deltaTime);
+        if (_animator != null)
+        {
+            _animator.SetFloat(VelocityXHash, vx, _dampTime, Time.deltaTime);
+            _animator.SetFloat(VelocityZHash, vz, _dampTime, Time.deltaTime);
+        }
     }
 
     private void FixedUpdate()
@@ -109,6 +116,9 @@ public class PlayerMoveController : MonoBehaviour, IService, ISaveable
 
     private void Move(Vector2 input)
     {
+        // У VR переміщення керується XR Interaction Toolkit (DynamicMoveProvider)
+        if (_isVRMode) return;
+
         float speed = _sprintAction != null && _sprintAction.IsPressed() ? _runSpeed : _walkSpeed;
         Vector3 move = (transform.forward * input.y + transform.right * input.x) * speed;
         _characterController.SimpleMove(move);
@@ -116,10 +126,15 @@ public class PlayerMoveController : MonoBehaviour, IService, ISaveable
 
     private void Look()
     {
-        transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
-        Vector3 currentRecoil = _playerFireController != null ? _playerFireController.GetCurrentRecoil() : Vector3.zero;
-        _playerCamera.transform.localRotation = Quaternion.Euler(_pitch + currentRecoil.x, currentRecoil.y, 0f);
+        // У VR ротацію камери та тіла задає HMD — не перезаписуємо
+        if (!_isVRMode)
+        {
+            transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
+            Vector3 currentRecoil = _playerFireController != null ? _playerFireController.GetCurrentRecoil() : Vector3.zero;
+            _playerCamera.transform.localRotation = Quaternion.Euler(_pitch + currentRecoil.x, currentRecoil.y, 0f);
+        }
 
+        // aimTarget завжди оновлюємо — у VR base forward = HMD forward
         Vector3 aimPoint = _playerCamera.position + _playerCamera.forward * _lookRange;
 
         if (Physics.Raycast(_playerCamera.position, _playerCamera.forward, out RaycastHit hit, _lookRange))
@@ -130,8 +145,10 @@ public class PlayerMoveController : MonoBehaviour, IService, ISaveable
                 aimPoint = _playerCamera.position + _playerCamera.forward * _minAimDistance;
             }
         }
-        _aimTarget.position = aimPoint;
-        _weaponTarget.transform.rotation = Quaternion.LookRotation((aimPoint - _weaponTarget.position).normalized);
+        if (_aimTarget != null)
+            _aimTarget.position = aimPoint;
+        if (_weaponTarget != null)
+            _weaponTarget.transform.rotation = Quaternion.LookRotation((aimPoint - _weaponTarget.position).normalized);
     }
 
     private void OnApplicationFocus(bool focus)

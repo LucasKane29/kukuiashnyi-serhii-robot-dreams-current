@@ -26,11 +26,13 @@ public class GameManager : MonoBehaviour, IService
     private float _winScore = 10f;
 
     [SerializeField]
-    private string _pauseActionName = "Pause", _inventoryActionName = "Inventory", _interactionActionName = "Interact";
+    private InputActionReference _pauseActionRef;      // LeftHand / MenuButton
+    [SerializeField]
+    private InputActionReference _inventoryActionRef;  // LeftHand / SecondaryButton (Y)
+    [SerializeField]
+    private InputActionReference _interactionActionRef; // LeftHand / PrimaryButton (X)
 
     private GameState _currentState = GameState.Playing;
-
-    private InputAction _pauseAction, _inventoryAction, _interactionAction;
 
     private UIManager _uiManager;
     private PlayerMoveController _playerMoveController;
@@ -60,9 +62,9 @@ public class GameManager : MonoBehaviour, IService
 
     public void Start()
     {
-        _pauseAction = InputSystem.actions.FindAction(_pauseActionName);
-        _inventoryAction = InputSystem.actions.FindAction(_inventoryActionName);
-        _interactionAction = InputSystem.actions.FindAction(_interactionActionName);
+        _pauseActionRef?.action.Enable();
+        _inventoryActionRef?.action.Enable();
+        _interactionActionRef?.action.Enable();
 
         if (_isGameScene)
             EnterState(GameState.Playing);
@@ -74,27 +76,30 @@ public class GameManager : MonoBehaviour, IService
     {
         if (!_isGameScene) return;
 
+        bool pausePressed     = _pauseActionRef != null     && _pauseActionRef.action.WasPressedThisFrame();
+        bool inventoryPressed = _inventoryActionRef != null && _inventoryActionRef.action.WasPressedThisFrame();
+        bool interactPressed  = _interactionActionRef != null && _interactionActionRef.action.WasPressedThisFrame();
+
         switch(_currentState)
         {
             case GameState.Playing:
-                if (_pauseAction != null && _pauseAction.triggered)
+                if (pausePressed)
                     ChangeState(GameState.Paused);
-                else if (_inventoryAction != null && _inventoryAction.triggered)
+                else if (inventoryPressed)
                     ChangeState(GameState.Inventory);
-                else if (_interactionAction != null && _interactionAction.triggered && _isCanInteract)
+                else if (interactPressed && _isCanInteract)
                     ChangeState(GameState.Shopping);
                 break;
             case GameState.Paused:
-                if (_pauseAction != null && _pauseAction.triggered)
+                if (pausePressed)
                     ChangeState(GameState.Playing);
                 break;
             case GameState.Inventory:
-                if ((_inventoryAction != null && _inventoryAction.triggered) ||
-                    (_pauseAction != null && _pauseAction.triggered))
+                if (inventoryPressed || pausePressed)
                     ChangeState(GameState.Playing);
                 break;
             case GameState.Shopping:
-                if (_pauseAction != null && _pauseAction.triggered)
+                if (pausePressed)
                     ChangeState(GameState.Playing);
                 break;
         }

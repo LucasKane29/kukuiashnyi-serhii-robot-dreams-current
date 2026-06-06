@@ -5,16 +5,16 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField]
-    private Canvas _mainMenu;
+    private Transform _mainMenu;
 
     [SerializeField]
-    private Canvas _deathScreen;
+    private Transform _deathScreen;
 
     [SerializeField]
-    private Canvas _winScreen;
+    private Transform _winScreen;
 
     [SerializeField]
-    private Canvas _settingsMenu;
+    private Transform _settingsMenu;
 
     [SerializeField]
     private Transform _loadButton;

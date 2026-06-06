@@ -21,10 +21,10 @@ public class UIManager : MonoBehaviour, IService
     private float _animationSpeed = 0.3f;
 
     [SerializeField]
-    private Canvas _playerUI;
+    private Transform _playerUI;
 
     [SerializeField]
-    private Canvas _inventoryUI;
+    private Transform _inventoryUI;
 
     [SerializeField]
     private Transform _itemsContainer;
